@@ -220,7 +220,7 @@ def draw_circos_MT(file,
     if axes==None:
         return fig, ax
  
-def _get_mt_rect_ax(ax, features, cex=18000, show_info=True, info_fontsize=10, show_gene_label=True, gene_label_fontsize=5):
+def _get_mt_rect_ax(ax, features, cex=18000, show_info=True, info_fontsize=10, show_gene_label=True, gene_label_fontsize=5, add_id=False):
     #cex = 18000      # genome max length
     height = 0.2     # gene width
     linewidth = 0.03 # genome width
@@ -264,7 +264,10 @@ def _get_mt_rect_ax(ax, features, cex=18000, show_info=True, info_fontsize=10, s
     ax.spines['top'].set_visible(False)
     ax.spines['bottom'].set_visible(False)
     
-    ax.text(-0.01, 0.5, s=species, ha='right', style='italic', fontsize=info_fontsize)
+    if add_id:
+        ax.text(-0.01, 0.5, s=species+" "+features[0].accession, ha='right', style='italic', fontsize=info_fontsize)
+    else:
+        ax.text(-0.01, 0.5, s=species, ha='right', style='italic', fontsize=info_fontsize)
     
     if show_info:
         ax.text(genome_length/cex+0.01, 0.55, s="+", ha='center', weight='bold', fontsize=info_fontsize)
@@ -290,6 +293,7 @@ def draw_linear_MT(files,
                    hspace=0.5,
                    subplot_height_cex=1.5,
                    tidyname=False,
+                   add_id = False
                   ):
     
     """
@@ -323,6 +327,7 @@ def draw_linear_MT(files,
         hspace: {0-1} spacing between subplots.
         subplot_height_cex: {float} a factors that control subplot scaling.
         tidyname: {bool} tidy gene name.
+        add_id: {bool} Species add to accession id from NCBI.
     """    
 
     if not (isinstance(files, list)) and (not isinstance(files, tuple)):
@@ -349,11 +354,13 @@ def draw_linear_MT(files,
     if show_xaxis == False and len(genomes) == 1:
         for i, features in enumerate(genomes):
             _get_mt_rect_ax(ax=ax, features=features, cex=genome_max_length+1000, show_info=show_info,
-                           info_fontsize=info_fontsize, show_gene_label=show_gene_label, gene_label_fontsize=gene_label_fontsize)
+                           info_fontsize=info_fontsize, show_gene_label=show_gene_label, 
+                           gene_label_fontsize=gene_label_fontsize, add_id=add_id)
     else:
         for i, features in enumerate(genomes):
             _get_mt_rect_ax(ax=ax[i], features=features, cex=genome_max_length+1000, show_info=show_info,
-                            info_fontsize=info_fontsize, show_gene_label=show_gene_label, gene_label_fontsize=gene_label_fontsize)
+                            info_fontsize=info_fontsize, show_gene_label=show_gene_label,
+                            gene_label_fontsize=gene_label_fontsize, add_id=add_id)
         
     if show_xaxis:
         ax[-1].get_yaxis().set_visible(False)

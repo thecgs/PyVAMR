@@ -24,6 +24,19 @@ class Feature:
     def __str__(self):
             return self.__repr__()
 
+def search_name(gene_name):
+    gene_name = gene_name.upper()
+    status = False
+    if CommonNamesDict.get(gene_name) == None:
+        for p in CommonNamesDict:
+            if bool(re.search(p+".", gene_name)):
+                status = True
+                return CommonNamesDict.get(p)
+    if status == False:
+        return gene_name
+    else:
+        return CommonNamesDict.get(gene_name)
+
 def is_repeat(features, location):
     status = False
     for i in features:
@@ -125,33 +138,65 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
         #print(file, record.id)
         for i in record.features:
             if len(list(i.qualifiers.values())) != 0:
-                if "gene" in i.qualifiers:
-                    gene_name = i.qualifiers['gene'][0]
-                    if i.qualifiers['gene'][0] not in CommonNamesDict and "product" in i.qualifiers:
-                        gene_name = i.qualifiers['product'][0]
-                elif "product" in i.qualifiers:
+                if "product" in i.qualifiers:
                     gene_name = i.qualifiers['product'][0]
-                elif "organism" in i.qualifiers:
-                    gene_name = i.qualifiers["organism"][0]
+                    gene_name =  search_name(gene_name)
+                    
+                    #print("gene_product", gene_name)
+                    if gene_name not in CommonNamesDict and "gene" in i.qualifiers:
+                        gene_name = i.qualifiers['product'][0]
+                        gene_name =  search_name(gene_name)
+                        
+                        if gene_name not in CommonNamesDict and "note" in i.qualifiers:
+                            gene_name = i.qualifiers['note'][0]
+                            gene_name =  search_name(gene_name)
+                        
+                elif "gene" in i.qualifiers:
+                    gene_name = i.qualifiers['gene'][0]
+                    gene_name =  search_name(gene_name)
+                    if gene_name not in CommonNamesDict and "note" in i.qualifiers:
+                        gene_name = i.qualifiers['note'][0]
+                        gene_name =  search_name(gene_name)
+                
                 elif "note" in i.qualifiers:
                     gene_name = i.qualifiers["note"][0]
+                    gene_name =  search_name(gene_name)
+                    
+                elif "organism" in i.qualifiers:
+                    gene_name = i.qualifiers["organism"][0]
+                    #gene_name =  search_name(gene_name)
+                    
                 else:
                     #print(i.qualifiers)
                      pass
             else:
                 gene_name = i.type
-            #print(i, gene_name)
+                gene_name =  search_name(gene_name)
+
             gene_name = CommonNamesDict.get(gene_name.upper(), gene_name)
+            #print(gene_name)
             
             if i.type ==  "source":
                 if isfilename2species:
-                    gene_name = os.path.splitext(os.path.basename(file))[0]
-                
-                species_name = get_species_name(gene_name, abbr=abbr)
+                    species_name = os.path.splitext(os.path.basename(file))[0]
+                species_name = i.qualifiers["organism"][0]
+                species_name = get_species_name(species_name, abbr=abbr)
                 
                 features.append(Feature(name=species_name, location=i.location, type=i.type, color=colors.get('source', 'gray'),
                                         mtgenome=mtgenome, accession=accession, file=file))
-                
+                                        
+            elif i.type in ['rRNA', 'tRNA', 'D_loop', 'D-loop']:
+                if gene_name in ['tRNA-His', 'tRNA-Pro', 'tRNA-Thr', 'tRNA-Trp', 'tRNA-Met', 'tRNA-Asp', 'tRNA-Ala', 'tRNA-Gln',
+                                 'tRNA-Ile', 'tRNA-Arg', 'tRNA-Tyr', 'tRNA-Phe', 'tRNA-Lys', 'tRNA-Gly', 'tRNA-Asn', 'tRNA-Leu',
+                                 'tRNA-Glu', 'tRNA-Val', 'tRNA-Cys', 'tRNA-Ser', '12S rRNA', '16S rRNA', "D-loop"]:
+                    if isinstance(i.location, CompoundLocation):
+                        for location in i.location.parts:
+                            if not is_repeat(features=features, location=location):
+                                features.append(Feature(name=gene_name, location=location, type=i.type, color=colors.get(gene_name, 'gray'),join=True))
+                    else:
+                        if not is_repeat(features=features, location=i.location):
+                            features.append(Feature(name=gene_name, location=i.location, type=i.type, color=colors.get(gene_name, 'gray')))
+                        
             elif i.type in ['CDS', 'gene']:
                 if gene_name in ['ND1', 'ND2', 'ND3', 'ND4L', 'ND4', 'ND5', 'ND6', 'COX1', 'COX2', 'COX3', 'ATPase6', 'ATPase8', 'Cytb']:
                     if isinstance(i.location, CompoundLocation):
@@ -161,16 +206,7 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
                     else:
                         if not is_repeat(features=features, location=i.location):
                             features.append(Feature(name=gene_name, location=i.location, type=i.type, color=colors.get(gene_name, 'gray')))
-                    
-            elif i.type in ['rRNA', 'tRNA', 'D_loop', 'D-loop']:
-                if gene_name in ['tRNA-His', 'tRNA-Pro', 'tRNA-Thr', 'tRNA-Trp', 'tRNA-Met', 'tRNA-Asp', 'tRNA-Ala', 'tRNA-Gln',
-                                 'tRNA-Ile', 'tRNA-Arg', 'tRNA-Tyr', 'tRNA-Phe', 'tRNA-Lys', 'tRNA-Gly', 'tRNA-Asn', 'tRNA-Leu',
-                                 'tRNA-Glu', 'tRNA-Val', 'tRNA-Cys', 'tRNA-Ser', '12S rRNA', '16S rRNA', "D-loop"]:
-                    if isinstance(i.location, CompoundLocation):
-                        for location in i.location.parts:
-                            features.append(Feature(name=gene_name, location=location, type=i.type, color=colors.get(gene_name, 'gray'),join=True))
-                    else:
-                        features.append(Feature(name=gene_name, location=i.location, type=i.type, color=colors.get(gene_name, 'gray')))
+                        
             elif i.type == 'misc_feature':
                 if gene_name in ['tRNA-His', 'tRNA-Pro', 'tRNA-Thr', 'tRNA-Trp', 'tRNA-Met', 'tRNA-Asp', 'tRNA-Ala', 'tRNA-Gln',
                                  'tRNA-Ile', 'tRNA-Arg', 'tRNA-Tyr', 'tRNA-Phe', 'tRNA-Lys', 'tRNA-Gly', 'tRNA-Asn', 'tRNA-Leu',
