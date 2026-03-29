@@ -660,7 +660,7 @@ MTColors = {"CHEN": MTColors_by_default,
             "CHLOROPLOT":MTColors_by_Chloroplot,
             "GREY":MTColors_by_Grey,
             "IGV":MTColors_by_IGV,
-            "SET3":MTColors_by_Set3
+            "GGGENES":MTColors_by_Set3
             }
 
 
