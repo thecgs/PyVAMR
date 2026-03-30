@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import math, re
+import logging
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch, FancyArrow
 from matplotlib.lines import Line2D
@@ -89,6 +90,7 @@ def draw_circos_MT(file,
                    direction=-1,
                    figsize=(10,10),
                    tidyname=False,
+                   add_id = False
                   ):
     """
     Descripton:
@@ -125,6 +127,7 @@ def draw_circos_MT(file,
         figsize: {tuple} fig of size.
         direction: {1, -1} clockwise: -1, anticlockwise: 1
         tidyname: {bool} tidy gene name.
+        add_id: {bool} Species add to accession id from NCBI.
     """
     
     if axes==None:
@@ -142,11 +145,31 @@ def draw_circos_MT(file,
     
     features = get_features(file, abbr=abbr, isfilename2species=isfilename2species, colors=colors, start=start)
     
-    if show_info:
+    try:
+        #str(features[0].mtgenome)  # UndefinedSequenceError
         GC = get_GC(features[0].mtgenome)
         genome_length = len(features[0].mtgenome)
         tRNA_count, rRNA_count, PCG_count = stat_features(features)
-        ax.text(0.5, 0.5, s=features[0].name+f"\n{genome_length} bp\nGC: {GC}%\n{PCG_count} PCGs; {rRNA_count} rRNAs; {tRNA_count} tRNAs",
+        if add_id:
+            info = features[0].accession +"; " + features[0].name+f"\n{genome_length} bp\nGC: {GC}%\n{PCG_count} PCGs; {rRNA_count} rRNAs; {tRNA_count} tRNAs"
+        else:
+            info = features[0].name+f"\n{genome_length} bp\nGC: {GC}%\n{PCG_count} PCGs; {rRNA_count} rRNAs; {tRNA_count} tRNAs"
+    except:
+        #show_info = False
+        show_GC_circos = False
+        logger = logging.getLogger(__name__) 
+        logger.setLevel(logging.DEBUG)
+        logger.warning(features[0].file+" Sequence content is undefined.")
+        tRNA_count, rRNA_count, PCG_count = stat_features(features)
+        if add_id:
+            info = features[0].accession +"; " + features[0].name+f"\n{PCG_count} PCGs; {rRNA_count} rRNAs; {tRNA_count} tRNAs"
+        else:
+            info = features[0].name+f"\n{PCG_count} PCGs; {rRNA_count} rRNAs; {tRNA_count} tRNAs"
+        
+    if show_info:            
+        #GC = get_GC(features[0].mtgenome)
+        #genome_length = len(features[0].mtgenome)
+        ax.text(0.5, 0.5, s=info,
                 fontsize=info_fontsize, style='italic', va='center', ha='center')
                 
     if tidyname:

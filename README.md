@@ -9,7 +9,7 @@ A Python package for visualizing animal mitochondrial rearrangements.
 
 ### Example 1:
 
-You can easily draw a circos of human mitochondria, just like this, using the [OGDRAW](https://chlorobox.mpimp-golm.mpg.de/OGDraw.html) theme.
+You can easily draw a circular mitogenome map in human, just like this, using the [OGDRAW](https://chlorobox.mpimp-golm.mpg.de/OGDraw.html) theme.
 
 ```python
 import pyvamr
@@ -21,11 +21,11 @@ The result is shown in the figure below:
 
 ![Schema of quickprot algorithm](doc/Fig.1.png#pic_center)
 
-<center>Fig.1 Circos plot in human mitochondria genome</center>
+<center>Fig.1 A circular mitogenome map in human</center>
 
 ### Example 2:
 
-According to a study by [Wang et al.](https://link.springer.com/article/10.1186/s40850-025-00239-x), compared with the ancestor of Stylommatophora, the mitochondrial genes of *M. pictum* exhibited multiple rearrangement events, while the mitochondrial genes of *S. arundinetorum* showed only minor differences. You can plot the two species separately for comparison (Fig. 2 A–B), or you can plot them together on the same figure, and using the [MitoFish](https://mitofish.aori.u-tokyo.ac.jp/annotation/draw) theme.
+According to a study by [Wang et al.](https://link.springer.com/article/10.1186/s40850-025-00239-x), compared with the ancestor of Stylommatophora, the mitochondrial genes of *M. pictum* exhibited multiple rearrangement events, while the mitochondrial genes of *S. arundinetorum* showed only minor differences. You can draw the two species separately for comparison (Fig. 2 A–B), or you can draw them together on the same figure, and using the [MitoFish](https://mitofish.aori.u-tokyo.ac.jp/annotation/draw) theme.
 
 ```python
 import pyvamr
@@ -50,11 +50,11 @@ The result is shown in the figure below:
 
 ![Schema of quickprot algorithm](doc/Fig.2.png#pic_center)
 
-<center>Fig.2 Circos in two Stylommatophora species</center>
+<center>Fig.2 Three circular mitogenome map in two Stylommatophora species</center>
 
 ### Example 3:
 
-For many species, Circos plots are clearly not the best choice; a study found that prevalent intraspecific gene rearrangements in [*Phrynocephalus*](https://www.mdpi.com/2073-4425/13/2/203). Below, we use a linear plot to visualize gene rearrangements. Use the gggenes theme and cut on the circular mitochondrial molecule from the designated 12S rRNA.
+Comparing the mitochondrial genomes of multiple species, Circos plots are clearly not the best choice; a study found that prevalent intraspecific gene rearrangements in [*Phrynocephalus*](https://www.mdpi.com/2073-4425/13/2/203). Below, we use a linear plot to visualize gene rearrangements. Use the gggenes theme and and open the circular mitochondrial genome at the specified site (such as, 12S rRNA).
 
 ```python
 import pyvamr

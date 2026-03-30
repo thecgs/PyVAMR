@@ -29,7 +29,7 @@ def search_name(gene_name):
     status = False
     if CommonNamesDict.get(gene_name) == None:
         for p in CommonNamesDict:
-            if bool(re.search(p+".", gene_name)):
+            if bool(re.search(re.escape(p), gene_name)):
                 status = True
                 return CommonNamesDict.get(p)
     if status == False:
@@ -144,12 +144,14 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
                     
                     #print("gene_product", gene_name)
                     if gene_name not in CommonNamesDict and "gene" in i.qualifiers:
-                        gene_name = i.qualifiers['product'][0]
+                        gene_name = i.qualifiers['gene'][0]
                         gene_name =  search_name(gene_name)
                         
                         if gene_name not in CommonNamesDict and "note" in i.qualifiers:
                             gene_name = i.qualifiers['note'][0]
                             gene_name =  search_name(gene_name)
+                            if gene_name not in CommonNamesDict and i.type.upper() in CommonNamesDict:
+                                gene_name =  search_name(i.type)
                         
                 elif "gene" in i.qualifiers:
                     gene_name = i.qualifiers['gene'][0]
@@ -157,22 +159,27 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
                     if gene_name not in CommonNamesDict and "note" in i.qualifiers:
                         gene_name = i.qualifiers['note'][0]
                         gene_name =  search_name(gene_name)
+                        if gene_name not in CommonNamesDict and i.type.upper() in CommonNamesDict:
+                            gene_name =  search_name(i.type)
                 
                 elif "note" in i.qualifiers:
                     gene_name = i.qualifiers["note"][0]
                     gene_name =  search_name(gene_name)
-                    
+                    #print(i, gene_name)
+                    if gene_name not in CommonNamesDict and i.type.upper() in CommonNamesDict:
+                        gene_name =  search_name(i.type)
+                                
                 elif "organism" in i.qualifiers:
                     gene_name = i.qualifiers["organism"][0]
                     #gene_name =  search_name(gene_name)
                     
                 else:
                     #print(i.qualifiers)
-                     pass
+                     continue
             else:
                 gene_name = i.type
                 gene_name =  search_name(gene_name)
-
+                
             gene_name = CommonNamesDict.get(gene_name.upper(), gene_name)
             #print(gene_name)
             
@@ -207,7 +214,7 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
                         if not is_repeat(features=features, location=i.location):
                             features.append(Feature(name=gene_name, location=i.location, type=i.type, color=colors.get(gene_name, 'gray')))
                         
-            elif i.type == 'misc_feature':
+            elif i.type in ['misc_feature', 'repeat_region']:
                 if gene_name in ['tRNA-His', 'tRNA-Pro', 'tRNA-Thr', 'tRNA-Trp', 'tRNA-Met', 'tRNA-Asp', 'tRNA-Ala', 'tRNA-Gln',
                                  'tRNA-Ile', 'tRNA-Arg', 'tRNA-Tyr', 'tRNA-Phe', 'tRNA-Lys', 'tRNA-Gly', 'tRNA-Asn', 'tRNA-Leu',
                                  'tRNA-Glu', 'tRNA-Val', 'tRNA-Cys', 'tRNA-Ser', '12S rRNA', '16S rRNA', "D-loop"]:
