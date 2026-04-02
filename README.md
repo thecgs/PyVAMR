@@ -14,7 +14,7 @@ You can easily draw a circular mitogenome map in human, just like this, using th
 ```python
 import pyvamr
 
-fig, ax = pyvamr.draw_circos_MT("NC_012920.1", color="OGDRAW")
+fig, ax = pyvamr.draw_circos_MT("NC_012920.1", colors="OGDRAW")
 ```
 
 The result is shown in the figure below:

@@ -186,9 +186,10 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
             if i.type ==  "source":
                 if isfilename2species:
                     species_name = os.path.splitext(os.path.basename(file))[0]
-                species_name = i.qualifiers["organism"][0]
+                else:
+                    species_name = i.qualifiers["organism"][0]
+                    
                 species_name = get_species_name(species_name, abbr=abbr)
-                
                 features.append(Feature(name=species_name, location=i.location, type=i.type, color=colors.get('source', 'gray'),
                                         mtgenome=mtgenome, accession=accession, file=file))
                                         
