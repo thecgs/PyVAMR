@@ -90,7 +90,8 @@ def draw_circos_MT(file,
                    direction=-1,
                    figsize=(10,10),
                    tidyname=False,
-                   add_id = False
+                   add_id = False,
+                   dpi = 300
                   ):
     """
     Descripton:
@@ -128,6 +129,7 @@ def draw_circos_MT(file,
         direction: {1, -1} clockwise: -1, anticlockwise: 1
         tidyname: {bool} tidy gene name.
         add_id: {bool} Species add to accession id from NCBI.
+        dpi: {int} dpi value. the resolution in dots per inch.
     """
     
     if axes==None:
@@ -238,7 +240,7 @@ def draw_circos_MT(file,
         ax.bar(x, [i*10 *GC_circos_height for i in y], width=w, bottom=radius-10, color=GC_circos_color, linewidth=0, edgecolor='black')
     
     if output!=None:
-        fig.savefig(output, bbox_inches='tight')
+        fig.savefig(output, bbox_inches='tight', dpi=dpi)
     
     if axes==None:
         return fig, ax
@@ -316,7 +318,8 @@ def draw_linear_MT(files,
                    hspace=0.5,
                    subplot_height_cex=1.5,
                    tidyname=False,
-                   add_id = False
+                   add_id = False,
+                   dpi = 300
                   ):
     
     """
@@ -351,6 +354,7 @@ def draw_linear_MT(files,
         subplot_height_cex: {float} a factors that control subplot scaling.
         tidyname: {bool} tidy gene name.
         add_id: {bool} Species add to accession id from NCBI.
+        dpi: {int} dpi value. the resolution in dots per inch.
     """    
 
     if not (isinstance(files, list)) and (not isinstance(files, tuple)):
@@ -409,7 +413,7 @@ def draw_linear_MT(files,
                       title='')
     
     if output!=None:
-        fig.savefig(output, bbox_inches='tight')    
+        fig.savefig(output, bbox_inches='tight', dpi=dpi)    
     return fig, ax
         
 def get_box_param(genename):
@@ -448,7 +452,7 @@ def get_box_param(genename):
     
 def draw_linear_MT_nonproportional(files, output=None, abbr=False, isfilename2species=False, colors="mitofish", gene_label_fontsize=9, 
                                    gene_label_color="black", show_legend=True, legend_size=8, legend_postion=(1, 0),
-                                   start="tRNA-Phe", height=0.6, species_fontsize=10, species_offset=-0.01, axes=None, add_id=False,
+                                   start="tRNA-Phe", height=0.6, species_fontsize=10, species_offset=-0.01, axes=None, add_id = False, dpi = 300
                                   ):
     """
     Descripton:
@@ -477,6 +481,7 @@ def draw_linear_MT_nonproportional(files, output=None, abbr=False, isfilename2sp
         species_offset: {float} species name offset.
         axes: {matplotlib.projections.polar.PolarAxes}
         add_id: {bool} Species add to accession id from NCBI.
+        dpi: {int} dpi value. the resolution in dots per inch.
     """
     
     if not (isinstance(files, list)) and (not isinstance(files, tuple)):
@@ -563,7 +568,7 @@ def draw_linear_MT_nonproportional(files, output=None, abbr=False, isfilename2sp
                   title='')
                   
     if output!=None:
-        fig.savefig(output, bbox_inches='tight')
+        fig.savefig(output, bbox_inches='tight', dpi=dpi)
     if axes != None:
         return ax
     else:
