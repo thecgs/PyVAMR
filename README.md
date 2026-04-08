@@ -14,7 +14,7 @@ You can easily draw a circular mitogenome map in human, just like this, using th
 ```python
 import pyvamr
 
-fig, ax = pyvamr.draw_circos_MT("NC_012920.1", colors="OGDRAW")
+fig, ax = pyvamr.draw_circos_MT("NC_012920.1", colors="OGDRAW", output="./doc/Fig.1.png", dpi=72)
 ```
 
 The result is shown in the figure below:
@@ -91,7 +91,7 @@ pyvamr.add_tag(axs=axs, by_row=True)
 
 axs[2].text(0.5, 0.5, s="Outer circle: Meghimatium pictum\nInner circle: Succinea arundinetorum", size=6, ha='center', va='center', style='italic')
 
-fig.savefig("Fig.svg", bbox_inches='tight')
+fig.savefig("./doc/Fig.2.png", bbox_inches='tight', dpi=72)
 ```
 
 The result is shown in the figure below:
@@ -112,7 +112,8 @@ accessions = ["KJ551842", "MF039062", "MF039063", "MF039065", "KJ630904", "MF039
               "KJ885621", "KJ830752", "KP279760", "KM093859", "MF039064", "KJ749841",
               "KM093858", "OL493803", "OL493804", "KC578685", "KC119493", "MK284224"]
 
-pyvamr.draw_linear_MT_nonproportional(accessions, start='12S rRNA', add_id=True, colors='GGGENES')
+pyvamr.draw_linear_MT_nonproportional(accessions, start='12S rRNA', add_id=True, colors='GGGENES',
+                                      output="./doc/Fig.3.png", dpi=72)
 ```
 
 The result is shown in the figure below:
@@ -129,7 +130,7 @@ As shown in Fig.3, the genes are not drawn to scale. Below is a scaled drawing o
 import pyvamr
 
 accessions = ["MF039060", "MF039058", "KP126516", "MK284225"]
-pyvamr.draw_linear_MT(accessions, start='12S rRNA', colors='Tan', add_id=True)
+pyvamr.draw_linear_MT(accessions, start='12S rRNA', colors='Tan', add_id=True, output="./doc/Fig.4.png", dpi=72)
 ```
 
 The result is shown in the figure below:
@@ -156,6 +157,8 @@ for theme, ax in zip(themes, axes):
     pyvamr.draw_circos_MT("NC_012920.1", colors=theme, radius=12, show_gene_label=False, 
                               show_info=False, show_legend=False, show_GC_circos=False, axes=ax)
     ax.text(0.5, 0.5, s=theme, ha='center', va='center')
+    
+fig.savefig("./doc/Fig.5.png", bbox_inches='tight', dpi=72)
 ```
 
 ![Schema of quickprot algorithm](doc/Fig.5.png#pic_center)
