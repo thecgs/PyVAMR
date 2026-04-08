@@ -50,19 +50,26 @@ def stat_features(features):
     rRNA_count = 0
     PCG_count = 0
     for feature in features:
-        if re.search('tRNA', feature.name) and feature.join==False:
+        if re.search('tRNA', feature.name) and feature.join==None:
             tRNA_count += 1
-        elif re.search('rRNA', feature.name) and feature.join==False:
+        elif re.search('rRNA', feature.name) and feature.join==None:
             rRNA_count += 1
-        elif re.search('COX|ATP|Cytb|ND', feature.name) and feature.join==False:
+        elif re.search('COX|ATP|Cytb|ND', feature.name) and feature.join==None:
             PCG_count += 1
 
-    for i in {i.name for i in features if i.join}:
-        if re.search('tRNA', feature.name) and feature.join==False:
+    tmp = []
+    features_join = []
+    for feature in features:
+        if feature.join not in tmp:
+            tmp.append(feature.join)
+            features_join.append(feature)
+
+    for feature in features_join:
+        if re.search('tRNA', feature.name):
             tRNA_count += 1
-        elif re.search('rRNA', feature.name) and feature.join==False:
+        elif re.search('rRNA', feature.name):
             rRNA_count += 1
-        elif re.search('COX|ATP|Cytb|ND', feature.name) and feature.join==False:
+        elif re.search('COX|ATP|Cytb|ND', feature.name):
             PCG_count += 1
     return tRNA_count, rRNA_count, PCG_count
 
@@ -415,12 +422,12 @@ def draw_linear_MT(files,
     if output!=None:
         fig.savefig(output, bbox_inches='tight', dpi=dpi)    
     return fig, ax
-        
+    
 def get_box_param(genename):
     head_length=0.0025
     if genename in ["F","V","L","I","Q","M","W","A","N","C","Y","S","D","K","G","R","H","S","L","E","T","P"]:
         tail_length = 0.005
-        text_offset = tail_length/2
+        text_offset = tail_length/2.5
         
     elif genename in ["ND1", "ND2", "ND3", "ND4", "ND4L", "ND5", "ND6"]:
         tail_length = 0.008
@@ -452,7 +459,7 @@ def get_box_param(genename):
     
 def draw_linear_MT_nonproportional(files, output=None, abbr=False, isfilename2species=False, colors="mitofish", gene_label_fontsize=9, 
                                    gene_label_color="black", show_legend=True, legend_size=8, legend_postion=(1, 0),
-                                   start="tRNA-Phe", height=0.6, species_fontsize=10, species_offset=-0.01, axes=None, add_id = False, dpi = 300
+                                   start="tRNA-Phe", height=0.6, species_fontsize=10, axes=None, add_id = False, dpi = 300
                                   ):
     """
     Descripton:
@@ -478,7 +485,6 @@ def draw_linear_MT_nonproportional(files, output=None, abbr=False, isfilename2sp
                      12S rRNA, 16S rRNA, D-loop.
         height: {0-1} box height.
         species_fontsize: {int} species name fontsize.
-        species_offset: {float} species name offset.
         axes: {matplotlib.projections.polar.PolarAxes}
         add_id: {bool} Species add to accession id from NCBI.
         dpi: {int} dpi value. the resolution in dots per inch.
@@ -499,25 +505,35 @@ def draw_linear_MT_nonproportional(files, output=None, abbr=False, isfilename2sp
     ax.set_ylim(0,len(genomes))
     
     xlimmax = 0
+    ys = []
+    ss = []
     for y, features in enumerate(genomes):
         for i, f in enumerate(features):
             features[i].name = FullName2AbbrName.get(f.name, f.name)
             
         if features[1].location.strand == -1:
-            x = get_box_param(features[1].name)[2]+0.01
+            x = get_box_param(features[1].name)[2]+0
         else:
-            x=0.01
+            x=0
             
+        #if add_id:
+        #    ax.text(species_offset, y+0.5, s=features[0].name + " " + features[0].accession, style='italic', size=species_fontsize, ha="right", va="center")
+        #else:
+        #    ax.text(species_offset, y+0.5, s=features[0].name, style='italic', size=species_fontsize, ha="right", va="center")
+        
+        ys.append(y+0.5)
         if add_id:
-            ax.text(species_offset, y+0.5, s=features[0].name + " " + features[0].accession, style='italic', size=species_fontsize, ha="right", va="center")
+            ss.append(features[0].name+ " " + features[0].accession)
         else:
-            ax.text(species_offset, y+0.5, s=features[0].name, style='italic', size=species_fontsize, ha="right", va="center")
+            ss.append(features[0].name)
         
         for i, feature in enumerate(features[1:]):
             head_length, tail_length, box_width, text_offset= get_box_param(feature.name)
+            
             if feature.location.strand == 1:
                 arrow = FancyArrow(x, y+0.5, tail_length, 0, width=height, fc=feature.color, ec='black', head_width=height, head_length=head_length)
                 ax.text(x+text_offset, y+0.5, feature.name, size=gene_label_fontsize, color=gene_label_color, ha="left", va="center",clip_on=False, clip_path=None)
+                
                 if i+1 < len(features[1:]):
                     if features[1:][i+1].location.strand == -1:
                         x += get_box_param(features[1:][i+1].name)[2] + get_box_param(features[1:][i].name)[2]
@@ -526,20 +542,25 @@ def draw_linear_MT_nonproportional(files, output=None, abbr=False, isfilename2sp
             else:
                 arrow = FancyArrow(x, y+0.5, -tail_length, 0, width=height, fc=feature.color, ec='black', head_width=height, head_length=head_length)
                 ax.text(x-text_offset, y+0.5, feature.name, size=gene_label_fontsize, color=gene_label_color, ha="right", va="center", clip_on=False, clip_path=None)
+                
                 if i+1 < len(features[1:]):
                     if features[1:][i+1].location.strand == -1:
                         x +=  get_box_param(features[1:][i+1].name)[2]
+                        
             ax.add_patch(arrow)
             if xlimmax < x:
                 xlimmax = x
                 
-    ax.set_xlim(0, xlimmax+0.01)           
+    ax.set_xlim(0, xlimmax + xlimmax*0.05)           
     ax.get_xaxis().set_visible(False)
-    ax.get_yaxis().set_visible(False)
+    #ax.get_yaxis().set_visible(False)
     ax.spines['left'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
     ax.spines['bottom'].set_visible(False)
+    ax.yaxis.set_ticks_position('none')
+    ax.set_yticks(ys)
+    ax.set_yticklabels(ss, fontdict={'fontsize':species_fontsize, 'fontstyle':'italic'})
     
     if show_legend:
         legend_elements = [Line2D([0], [0], color='black',marker='>', markersize=legend_size, 

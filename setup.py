@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(name="pyvamr",
-      version="1.0.0",
-      description='A Python package for visualizing animal mitochondrial rearrangements',
+      version="1.0.1",
+      description='A Python package for comparative visualization of animal mitochondrial genomes',
       url='https://github.com/thecgs/PyVAMR',
       author='Guisen Chen',
       author_email='thecgs001@foxmail.com',
