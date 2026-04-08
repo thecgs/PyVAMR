@@ -112,7 +112,7 @@ accessions = ["KJ551842", "MF039062", "MF039063", "MF039065", "KJ630904", "MF039
               "KJ885621", "KJ830752", "KP279760", "KM093859", "MF039064", "KJ749841",
               "KM093858", "OL493803", "OL493804", "KC578685", "KC119493", "MK284224"]
 
-pyvamr.draw_linear_MT_nonproportional(accessions, start='12S rRNA', species_offset=-0.0001, add_id=True, colors='GGGENES')
+pyvamr.draw_linear_MT_nonproportional(accessions, start='12S rRNA', add_id=True, colors='GGGENES')
 ```
 
 The result is shown in the figure below:
