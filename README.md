@@ -164,7 +164,7 @@ pyvamr.draw_linear_MT_nonproportional_interactive(files=["MK804148", "MK804158",
                                                   output="./doc/Fig.6.html")
 ```
 
-<p><div style="width:100%; height:350px;border:none;text-align:center"><iframe allowtransparency="yes" frameborder="0" width="300" height="300" src="./doc/Fig.6.html"/></div></p>
+[Veiw Fig.6.html](https://html-preview.github.io/?url=https://github.com/thecgs/PyVAMR/blob/main/doc/Fig.6.html)
 
 ```python
 import pyvamr
@@ -174,7 +174,7 @@ pyvamr.draw_linear_MT_interactive(files=["MK804148", "MK804158","MK804149", "MK8
                                   output="./doc/Fig.7.html")
 ```
 
-<p><div style="width:100%; height:350px;border:none;text-align:center"><iframe allowtransparency="yes" frameborder="0" width="300" height="300" src="./doc/Fig.7.html"/></div></p>
+[Veiw Fig.7.html](https://html-preview.github.io/?url=https://github.com/thecgs/PyVAMR/blob/main/doc/Fig.7.html)
 
 ## Themes
 
