@@ -405,8 +405,8 @@ class InteractiveMTVisualizer:
         fig.update_layout(**layout_dict) 
         if output:
             fig.write_html(output, config=self.nav_config)
-        else:
-            return fig
+        #else:
+        return fig
             
     def draw_linear_MT_plotly(self,
                               files,
@@ -718,8 +718,8 @@ class InteractiveMTVisualizer:
         
         if output:
             fig.write_html(output, config=self.nav_config)
-        else:
-            return fig
+        #else:
+        return fig
             
             
 def draw_linear_MT_nonproportional_interactive(files, output=None, abbr=False, isfilename2species=False,
