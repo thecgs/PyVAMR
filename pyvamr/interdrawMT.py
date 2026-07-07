@@ -134,10 +134,20 @@ class InteractiveMTVisualizer:
         res['Gap'] =  {'group':"Gap"}
         return res
         
-    def draw_linear_MT_nonproportional_plotly(self, files, output=None, abbr=False, isfilename2species=False,
-                                              colors="mitofish", gene_label_fontsize=9, gene_label_color='black',
+    def draw_linear_MT_nonproportional_plotly(self,
+                                              files,
+                                              output=None,
+                                              abbr=False,
+                                              isfilename2species=False,
+                                              colors="mitofish",
+                                              gene_label_size=9,
+                                              gene_label_color='black',
                                               show_legend=True,
-                                              start=None, species_fontsize=12, add_id=False, editable=False,
+                                              start=None,
+                                              species_label_size=12, 
+                                              species_label_color='black',
+                                              add_id=False,
+                                              editable=False,
                                               force_reoriented=False):
         """
         Descripton:
@@ -151,7 +161,7 @@ class InteractiveMTVisualizer:
             isfilename2species: {bool} whether filename convert to species.
             colors: {str, dict} themes such as, Chen, Tan, ogdraw, mitofish,
                                 mitofish1, mitoz,  gggenes, chloroplot, grey, igv.
-            gene_label_fontsize: {int} gene label fontsize.
+            gene_label_size: {int} gene label size.
             gene_label_color: {str} gene label color.
             show_legend: {bool} show fig legend.
             start: {None, str} initial feature, such as, ND1, ND2, ND3, ND4, ND4L, ND5, ND6,
@@ -160,7 +170,8 @@ class InteractiveMTVisualizer:
                          tRNA-Ile, tRNA-Arg, tRNA-Tyr, tRNA-Phe, tRNA-Lys, tRNA-Gly,
                          tRNA-Asn, tRNA-Leu, tRNA-Glu, tRNA-Val, tRNA-Cys, tRNA-Ser,
                          12S rRNA, 16S rRNA, D-loop. default=None.
-            species_fontsize: {int} species name fontsize.
+            species_label_size: {int} species name size.
+            species_label_color: {str} species name color.
             add_id: {bool} Species add to accession id from NCBI.
             editable: {bool} Make HTML files editable.
             force_reoriented: {bool} force-reoriendted linear mtgenome.
@@ -251,7 +262,7 @@ class InteractiveMTVisualizer:
                         y=y_pos,
                         text=FullName2AbbrName.get(feature.name, feature.name),
                         showarrow=False,
-                        font=dict(size=gene_label_fontsize, color=gene_label_color),
+                        font=dict(size=gene_label_size, color=gene_label_color),
                         xanchor='left',
                         yanchor='middle', 
                         hoverlabel=dict(bgcolor='rgba(255, 255, 255, 0.8)',
@@ -297,7 +308,7 @@ class InteractiveMTVisualizer:
                         y=y_pos,
                         text=FullName2AbbrName.get(feature.name, feature.name),
                         showarrow=False,
-                        font=dict(size=gene_label_fontsize, color=gene_label_color),
+                        font=dict(size=gene_label_size, color=gene_label_color),
                         xanchor='right',
                         yanchor='middle',
                         hoverlabel=dict(bgcolor='rgba(255, 255, 255, 0.8)',
@@ -352,7 +363,7 @@ class InteractiveMTVisualizer:
                           ticktext=species_labels,
                           fixedrange=False,
                           constrain='domain',
-                          tickfont=dict(size=species_fontsize, style='italic', color='black')
+                          tickfont=dict(size=species_label_size, style='italic', color=species_label_color)
             ),
             'showlegend': show_legend,
             'margin':dict(l=50, r=50, t=50, b=50, pad=10),
@@ -397,26 +408,40 @@ class InteractiveMTVisualizer:
         else:
             return fig
             
-    def draw_linear_MT_plotly(self, files, output=None, abbr=False, isfilename2species=False,
-                              colors="mitofish", show_gene_label=True, gene_label_fontsize=9,
-                              gene_label_color='black', species_label_fontsize=16,
-                              show_legend=True, start=None, tidyname=False, add_id=False,
-                              editable=False, force_reoriented=False,
+    def draw_linear_MT_plotly(self,
+                              files,
+                              output=None,
+                              abbr=False,
+                              isfilename2species=False,
+                              colors="mitofish",
+                              show_gene_label=True,
+                              gene_label_size=9,
+                              gene_label_color='black',
+                              species_label_size=16,
+                              species_label_color='black',
+                              show_legend=True,
+                              start=None,
+                              tidyname=False,
+                              add_id=False,
+                              editable=False,
+                              force_reoriented=False,
                              ):
         """
         Descripton:
             The order of mitochondrial genes, arranged in proportion to their size.
             Interactive chart developed using Plotly.
         
-        Parameters：
+        Parameters:
             files: {str, list, tuple} one or more genbankfile or NCBI accession ID.
             output: {str} a path of fig save, save as HTML file.
             abbr: {bool} whether to abbreviate species names.
             isfilename2species: {bool} whether filename convert to species.
             colors: {str, dict} themes such as, Chen, Tan, ogdraw, mitofish,
                                 mitofish1, mitoz,  gggenes, chloroplot, grey, igv.
-            gene_label_fontsize: {int} gene label fontsize.
+            gene_label_size: {int} gene label size.
             gene_label_color: {str} gene label color.
+            species_label_size: {int} species name size.
+            species_label_color: {int} species name color.
             show_legend: {bool} show fig legend.
             start: {None, str} initial feature, such as, ND1, ND2, ND3, ND4, ND4L, ND5, ND6,
                          COX1, COX2, COX3, ATPase6, ATPase8, Cytb, tRNA-His, tRNA-Pro,
@@ -424,8 +449,6 @@ class InteractiveMTVisualizer:
                          tRNA-Ile, tRNA-Arg, tRNA-Tyr, tRNA-Phe, tRNA-Lys, tRNA-Gly,
                          tRNA-Asn, tRNA-Leu, tRNA-Glu, tRNA-Val, tRNA-Cys, tRNA-Ser,
                          12S rRNA, 16S rRNA, D-loop. default=None.
-                         
-            species_label_fontsize: {int} species name fontsize.
             add_id: {bool} Species add to accession id from NCBI.
             editable: {bool} Make HTML files editable.
             force_reoriented: {bool} force-reoriendted linear mtgenome.
@@ -504,7 +527,7 @@ class InteractiveMTVisualizer:
                             
                             showarrow=False,
                             textangle=90,
-                            font=dict(size=gene_label_fontsize, color=gene_label_color),
+                            font=dict(size=gene_label_size, color=gene_label_color),
                             xanchor='center',
                             yanchor='bottom',
                             hovertext=hover_text,
@@ -559,7 +582,7 @@ class InteractiveMTVisualizer:
                             text=FullName2AbbrName.get(feature.name, feature.name) if tidyname else feature.name,
                             showarrow=False,
                             textangle=90,
-                            font=dict(size=gene_label_fontsize, color=gene_label_color),
+                            font=dict(size=gene_label_size, color=gene_label_color),
                             hovertext=hover_text,
                             hoverlabel=dict(bgcolor='rgba(255, 255, 255, 0.8)', bordercolor='black'),
                             xanchor='center',
@@ -653,7 +676,7 @@ class InteractiveMTVisualizer:
         for i in range(1, len(files)+1):
             fig.update_yaxes(range=[-1, 1],
                              tickvals=[medial_axis],ticktext=[species_names[i-1]],
-                             tickfont=dict(size=species_label_fontsize, style='italic', color='black'),
+                             tickfont=dict(size=species_label_size, style='italic', color=species_label_color),
                              row=i, col=1, showticklabels=True)
             if i < len(files):
                 fig.update_xaxes(
@@ -700,9 +723,9 @@ class InteractiveMTVisualizer:
             
             
 def draw_linear_MT_nonproportional_interactive(files, output=None, abbr=False, isfilename2species=False,
-                                               colors="mitofish", gene_label_fontsize=9, gene_label_color='black',
+                                               colors="mitofish", gene_label_size=9, gene_label_color='black',
                                                show_legend=True,
-                                               start=None, species_fontsize=12, add_id=False, editable=False,
+                                               start=None, species_label_size=12, species_label_color='black', add_id=False, editable=False,
                                                force_reoriented=False):
     """
     Descripton:
@@ -716,8 +739,10 @@ def draw_linear_MT_nonproportional_interactive(files, output=None, abbr=False, i
         isfilename2species: {bool} whether filename convert to species.
         colors: {str, dict} themes such as, Chen, Tan, ogdraw, mitofish,
                             mitofish1, mitoz,  gggenes, chloroplot, grey, igv.
-        gene_label_fontsize: {int} gene label fontsize.
+        gene_label_size: {int} gene label size.
         gene_label_color: {str} gene label color.
+        species_label_size: {int} species name size.
+        species_label_color: {str} species name color.
         show_legend: {bool} show fig legend.
         start: {None, str} initial feature, such as, ND1, ND2, ND3, ND4, ND4L, ND5, ND6,
                      COX1, COX2, COX3, ATPase6, ATPase8, Cytb, tRNA-His, tRNA-Pro,
@@ -725,7 +750,6 @@ def draw_linear_MT_nonproportional_interactive(files, output=None, abbr=False, i
                      tRNA-Ile, tRNA-Arg, tRNA-Tyr, tRNA-Phe, tRNA-Lys, tRNA-Gly,
                      tRNA-Asn, tRNA-Leu, tRNA-Glu, tRNA-Val, tRNA-Cys, tRNA-Ser,
                      12S rRNA, 16S rRNA, D-loop. default=None.
-        species_fontsize: {int} species name fontsize.
         add_id: {bool} Species add to accession id from NCBI.
         editable: {bool} Make HTML files editable.
         force_reoriented: {bool} force-reoriendted linear mtgenome.
@@ -735,11 +759,12 @@ def draw_linear_MT_nonproportional_interactive(files, output=None, abbr=False, i
                                                                            abbr=abbr,
                                                                            isfilename2species=isfilename2species, 
                                                                            colors=colors,
-                                                                           gene_label_fontsize=gene_label_fontsize, 
+                                                                           gene_label_size=gene_label_size, 
                                                                            gene_label_color='black',
                                                                            show_legend=show_legend,
                                                                            start=start,
-                                                                           species_fontsize=species_fontsize,
+                                                                           species_label_size=species_label_size,
+                                                                           species_label_color=species_label_color,
                                                                            add_id=add_id,
                                                                            editable=editable,
                                                                            force_reoriented=force_reoriented)
@@ -749,9 +774,10 @@ def draw_linear_MT_interactive(files, output=None,
                                isfilename2species=False,
                                colors="mitofish",
                                show_gene_label=True,
-                               gene_label_fontsize=9,
+                               gene_label_size=9,
                                gene_label_color='black',
-                               species_label_fontsize=16,
+                               species_label_size=16,
+                               species_label_color='black',
                                show_legend=True,
                                start=None,
                                tidyname=False,
@@ -770,8 +796,10 @@ def draw_linear_MT_interactive(files, output=None,
         isfilename2species: {bool} whether filename convert to species.
         colors: {str, dict} themes such as, Chen, Tan, ogdraw, mitofish,
                             mitofish1, mitoz,  gggenes, chloroplot, grey, igv.
-        gene_label_fontsize: {int} gene label fontsize.
+        gene_label_size: {int} gene label size.
         gene_label_color: {str} gene label color.
+        species_label_size: {int} species name size.
+        species_label_color: {str} species name color.
         show_legend: {bool} show fig legend.
         start: {None, str} initial feature, such as, ND1, ND2, ND3, ND4, ND4L, ND5, ND6,
                      COX1, COX2, COX3, ATPase6, ATPase8, Cytb, tRNA-His, tRNA-Pro,
@@ -779,8 +807,6 @@ def draw_linear_MT_interactive(files, output=None,
                      tRNA-Ile, tRNA-Arg, tRNA-Tyr, tRNA-Phe, tRNA-Lys, tRNA-Gly,
                      tRNA-Asn, tRNA-Leu, tRNA-Glu, tRNA-Val, tRNA-Cys, tRNA-Ser,
                      12S rRNA, 16S rRNA, D-loop. default=None.
-                     
-        species_label_fontsize: {int} species name fontsize.
         add_id: {bool} Species add to accession id from NCBI.
         editable: {bool} Make HTML files editable.
         force_reoriented: {bool} force-reoriendted linear mtgenome.
@@ -791,9 +817,10 @@ def draw_linear_MT_interactive(files, output=None,
                                                            isfilename2species=isfilename2species,
                                                            colors=colors,
                                                            show_gene_label=show_gene_label,
-                                                           gene_label_fontsize=gene_label_fontsize,
+                                                           gene_label_size=gene_label_size,
                                                            gene_label_color=gene_label_color,
-                                                           species_label_fontsize=species_label_fontsize,
+                                                           species_label_size=species_label_size,
+                                                           species_label_color=species_label_color,
                                                            show_legend=show_legend,
                                                            start=start,
                                                            tidyname=tidyname,

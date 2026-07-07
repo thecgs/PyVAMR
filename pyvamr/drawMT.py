@@ -81,7 +81,7 @@ def draw_circos_MT(file,
                    colors="mitofish",
                    radius=25,
                    show_gene_label = True,
-                   gene_label_fontsize=7,
+                   gene_label_size=7,
                    gene_label_inner=False,
                    show_info=True,
                    info_fontsize=15,
@@ -114,7 +114,7 @@ def draw_circos_MT(file,
                             mitofish1, mitoz,  gggenes, chloroplot, grey, igv.
         radius: {int} radius of the circle.
         show_gene_label: {bool} show gene label.
-        gene_label_fontsize: {int} gene label fontsize.
+        gene_label_size: {int} gene label fontsize.
         gene_label_inner: {bool} whether the control gene label is inner.
         show_info: {bool} show species name, GC context, genome length, and gene count information.
         info_fontsize: {int} information fontsize.
@@ -208,12 +208,12 @@ def draw_circos_MT(file,
                 ax.bar(theta, 1, width=width, bottom=radius-5, color=feature.color, label=feature.name, linewidth=0.5, edgecolor='black')
                 if show_gene_label:
                     ax.annotate(feature.name,  xy=(theta, radius-4), xytext=(theta, radius-1), arrowprops=dict(arrowstyle="-", connectionstyle="arc3"), 
-                                horizontalalignment='center', verticalalignment='center', fontsize=gene_label_fontsize, rotation=rotation_text(theta))
+                                horizontalalignment='center', verticalalignment='center', fontsize=gene_label_size, rotation=rotation_text(theta))
             elif feature.location.strand == -1:
                 ax.bar(theta, 1, width=width, bottom=radius-6, color=feature.color, label=feature.name, linewidth=0.5, edgecolor='black')
                 if show_gene_label:
                     ax.annotate(feature.name,  xy=(theta, radius-5), xytext=(theta, radius), arrowprops=dict(arrowstyle="-", connectionstyle="arc3"), 
-                                horizontalalignment='center', verticalalignment='center', fontsize=gene_label_fontsize, rotation=rotation_text(theta))
+                                horizontalalignment='center', verticalalignment='center', fontsize=gene_label_size, rotation=rotation_text(theta))
             ax.plot([i* math.pi/180 for i in range(0, 361)], [radius-5]*361, c='black')
         
         else:
@@ -221,12 +221,12 @@ def draw_circos_MT(file,
                 ax.bar(theta, 1, width=width, bottom=radius, color=feature.color, label=feature.name, linewidth=0.5, edgecolor='black')
                 if show_gene_label:
                     ax.annotate(feature.name,  xy=(theta, radius), xytext=(theta, radius-4), arrowprops=dict(arrowstyle="-", connectionstyle="arc3"), 
-                                horizontalalignment='center', verticalalignment='center', fontsize=gene_label_fontsize, rotation=rotation_text(theta))
+                                horizontalalignment='center', verticalalignment='center', fontsize=gene_label_size, rotation=rotation_text(theta))
             else:
                 ax.bar(theta, 1, width=width, bottom=radius-1, color=feature.color, label=feature.name, linewidth=0.5, edgecolor='black')
                 if show_gene_label:
                     ax.annotate(feature.name,  xy=(theta, radius-1), xytext=(theta, radius-5), arrowprops=dict(arrowstyle="-", connectionstyle="arc3"), 
-                                horizontalalignment='center', verticalalignment='center', fontsize=gene_label_fontsize, rotation=rotation_text(theta))
+                                horizontalalignment='center', verticalalignment='center', fontsize=gene_label_size, rotation=rotation_text(theta))
                 
             ax.plot([i* math.pi/180 for i in range(0, 361)], [radius]*361, c='black')
             
@@ -263,7 +263,7 @@ def draw_circos_MT(file,
     if axes==None:
         return fig, ax
  
-def _get_mt_rect_ax(ax, features, show_info=True, info_fontsize=10, show_gene_label=True, gene_label_fontsize=5, add_id=False, force_reoriented=True):
+def _get_mt_rect_ax(ax, features, show_info=True, info_fontsize=10, show_gene_label=True, gene_label_size=5, add_id=False, force_reoriented=True, species_label_size=10, species_label_color='black'):
     height = 0.2     # gene width
     linewidth = 0.03 # genome width
     _staus_brake_tmp = False
@@ -290,7 +290,7 @@ def _get_mt_rect_ax(ax, features, show_info=True, info_fontsize=10, show_gene_la
                                  edgecolor='black')
             if show_gene_label:
                 x = (end-start)/2 + start
-                ax.text(x, y=0.45+height+linewidth+0.05, s=feature.name, rotation = 'vertical', size=gene_label_fontsize, ha='center')
+                ax.text(x, y=0.45+height+linewidth+0.05, s=feature.name, rotation = 'vertical', size=gene_label_size, ha='center')
             
         elif feature.location.strand == -1:
             rect = plt.Rectangle(xy=(start, 0.25), 
@@ -300,7 +300,7 @@ def _get_mt_rect_ax(ax, features, show_info=True, info_fontsize=10, show_gene_la
                                  edgecolor='black')
             if show_gene_label:
                 x = (end-start)/2 + start
-                ax.text(x, y=0.45-height-linewidth+0.005, s=feature.name, rotation = 'vertical', size=gene_label_fontsize, va='top', ha='center')
+                ax.text(x, y=0.45-height-linewidth+0.005, s=feature.name, rotation = 'vertical', size=gene_label_size, va='top', ha='center')
         else:
             _staus_brake = True
             _staus_brake_tmp = True
@@ -310,9 +310,6 @@ def _get_mt_rect_ax(ax, features, show_info=True, info_fontsize=10, show_gene_la
                                               color=["black", "black"])
             ax.add_collection(line)
             if features[-1].name != "Gap":
-                #rect1 = plt.Rectangle(xy=(genome_length, 0.45), width=box_width, height=linewidth, color='red')
-                #rect2 = plt.Rectangle(xy=(x+7, 0.42), width=box_width, height=linewidth+0.05, edgecolor=None, facecolor='white', linewidth=0)
-            #else:
                 rect1 = plt.Rectangle(xy=(genome_length, 0.45), width=box_width, height=linewidth, color='black')
                 rect2 = plt.Rectangle(xy=(x+7, 0.42), width=box_width-16, height=linewidth+0.05, edgecolor=None, facecolor='white', linewidth=0)
                 ax.add_patch(rect1)
@@ -328,9 +325,9 @@ def _get_mt_rect_ax(ax, features, show_info=True, info_fontsize=10, show_gene_la
     ax.spines['bottom'].set_visible(False)
     
     if add_id:
-        ax.text(-100, 0.5, s=species+" "+features[0].accession, ha='right', style='italic', fontsize=info_fontsize)
+        ax.text(-100, 0.5, s=species+" "+features[0].accession, ha='right', style='italic', fontsize=species_label_size, color=species_label_color)
     else:
-        ax.text(-100, 0.5, s=species, ha='right', style='italic', fontsize=info_fontsize)
+        ax.text(-100, 0.5, s=species, ha='right', style='italic', fontsize=species_label_size, color=species_label_color)
         
     if show_info:
         if _staus_brake_tmp:
@@ -349,7 +346,10 @@ def draw_linear_MT(files,
                    isfilename2species=False,
                    colors="mitofish",
                    show_gene_label = True,
-                   gene_label_fontsize=5,
+                   gene_label_size=5,
+                   gene_label_color='black',
+                   species_label_size=10,
+                   species_label_color='black',
                    show_info=True,
                    info_fontsize=10,
                    show_legend=True,
@@ -379,10 +379,12 @@ def draw_linear_MT(files,
                             mitofish1, mitoz,  gggenes, chloroplot, grey, igv.
 
         show_gene_label: {bool} show gene label.
-        gene_label_fontsize: {int} gene label fontsize.
+        gene_label_size: {int} gene label size.
+        gene_label_color: {str} gene label color.
+        species_label_size: {int} species name size.
+        species_label_color: {str} species name color.
         show_info: {bool} show genome length, and strand.
         info_fontsize: {int} information fontsize.
-
         show_legend: {bool} show fig legend.
         legend_size: {int} legend size.
         legend_postion: {tuple} such as (x, y), x=0-1, y=0-1.
@@ -427,12 +429,12 @@ def draw_linear_MT(files,
         for i, features in enumerate(genomes):
             _staus_brake = _get_mt_rect_ax(ax=ax, features=features, show_info=show_info,
                            info_fontsize=info_fontsize, show_gene_label=show_gene_label, 
-                           gene_label_fontsize=gene_label_fontsize, add_id=add_id,force_reoriented=force_reoriented)
+                           gene_label_size=gene_label_size, add_id=add_id,force_reoriented=force_reoriented, species_label_size=species_label_size, species_label_color=species_label_color)
     else:
         for i, features in enumerate(genomes):
             _staus_brake = _get_mt_rect_ax(ax=ax[i], features=features, show_info=show_info,
                             info_fontsize=info_fontsize, show_gene_label=show_gene_label,
-                            gene_label_fontsize=gene_label_fontsize, add_id=add_id,force_reoriented=force_reoriented)
+                            gene_label_size=gene_label_size, add_id=add_id,force_reoriented=force_reoriented, species_label_size=species_label_size, species_label_color=species_label_color)
         
     if show_xaxis:
         ax[-1].get_yaxis().set_visible(False)
@@ -510,14 +512,15 @@ def draw_linear_MT_nonproportional(files,
                                    abbr=False,
                                    isfilename2species=False,
                                    colors="mitofish",
-                                   gene_label_fontsize=9, 
+                                   gene_label_size=9, 
                                    gene_label_color="black",
                                    show_legend=True,
                                    legend_size=8,
                                    legend_postion=(1, 0),
                                    start=None,
                                    height=0.6,
-                                   species_fontsize=10,
+                                   species_label_size=10,
+                                   species_label_color="black",
                                    axes=None,
                                    add_id = False,
                                    dpi = 300,
@@ -534,8 +537,10 @@ def draw_linear_MT_nonproportional(files,
         isfilename2species: {bool} whether filename convert to species.
         colors: {str, dict} themes such as, Chen, Tan, ogdraw, mitofish,
                             mitofish1, mitoz,  gggenes, chloroplot, grey, igv.
-        gene_label_fontsize: {int} gene label fontsize.
+        gene_label_size: {int} gene label size.
         gene_label_color: {str} gene label color.
+        species_label_size: {int} species name size.
+        species_label_color: {str} species name color.
         show_legend: {bool} show fig legend.
         legend_size: {int} legend size.
         legend_postion: {tuple} such as (x, y), x=0-1, y=0-1.
@@ -546,7 +551,6 @@ def draw_linear_MT_nonproportional(files,
                      tRNA-Asn, tRNA-Leu, tRNA-Glu, tRNA-Val, tRNA-Cys, tRNA-Ser,
                      12S rRNA, 16S rRNA, D-loop. default=None.
         height: {0-1} box height.
-        species_fontsize: {int} species name fontsize.
         axes: {matplotlib.projections.polar.PolarAxes}
         add_id: {bool} Species add to accession id from NCBI.
         dpi: {int} dpi value. the resolution in dots per inch.
@@ -591,7 +595,7 @@ def draw_linear_MT_nonproportional(files,
             
             if feature.location.strand == 1:
                 arrow = FancyArrow(x, y+0.5, tail_length, 0, width=height, fc=feature.color, ec='black', head_width=height, head_length=head_length)
-                ax.text(x+text_offset, y+0.5, feature.name, size=gene_label_fontsize, color=gene_label_color, ha="left", va="center",clip_on=False, clip_path=None)
+                ax.text(x+text_offset, y+0.5, feature.name, size=gene_label_size, color=gene_label_color, ha="left", va="center",clip_on=False, clip_path=None)
                 
                 if i+1 < len(features[1:]):
                     if features[1:][i+1].location.strand == -1:
@@ -600,13 +604,11 @@ def draw_linear_MT_nonproportional(files,
                         x += get_box_param(features[1:][i].name)[2]
             elif feature.location.strand == -1:
                 arrow = FancyArrow(x, y+0.5, -tail_length, 0, width=height, fc=feature.color, ec='black', head_width=height, head_length=head_length)
-                ax.text(x-text_offset, y+0.5, feature.name, size=gene_label_fontsize, color=gene_label_color, ha="right", va="center", clip_on=False, clip_path=None)
-                
+                ax.text(x-text_offset, y+0.5, feature.name, size=gene_label_size, color=gene_label_color, ha="right", va="center", clip_on=False, clip_path=None)
                 if i+1 < len(features[1:]):
                     if features[1:][i+1].location.strand == -1:
                         x +=  get_box_param(features[1:][i+1].name)[2]
             else:
-                #from matplotlib import collections
                 _staus_brake = True
                 line = collections.LineCollection([[(x+box_width/6, y+0.2), (x+box_width/2, y+0.8)],
                                                    [(x+box_width/2, y+0.2), (x+box_width*5/6, y+0.8)]],
@@ -632,7 +634,7 @@ def draw_linear_MT_nonproportional(files,
     ax.spines['bottom'].set_visible(False)
     ax.yaxis.set_ticks_position('none')
     ax.set_yticks(ys)
-    ax.set_yticklabels(ss, fontdict={'fontsize':species_fontsize, 'fontstyle':'italic'})
+    ax.set_yticklabels(ss, fontdict={'fontsize':species_label_size, 'fontstyle':'italic', 'color':species_label_color})
     
     if show_legend:
         if _staus_brake:

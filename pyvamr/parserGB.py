@@ -89,7 +89,7 @@ def reinit_features(features, start = "tRNA-Phe", force_reoriented=False):
         logger.warning(features[0].file+" does not contain" + start + ". Therefore, the rotation operation was not performed. Please check.")
         return features
         
-    if force_reoriented == False:
+    if features[0].topology == "linear" and force_reoriented == False:
         logger.warning(features[0].file+" is linear topology. Reoriention is disabled by default, so no rotation operation was performed. To force reoriention, use the force_reoriented=True parameter.")
         return features
         
