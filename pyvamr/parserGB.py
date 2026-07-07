@@ -11,7 +11,7 @@ from .config import CommonNamesDict, MTColors
 from Bio.SeqFeature import CompoundLocation, SimpleLocation
 
 class Feature:
-    def __init__(self, name, location, type, color, join=None, mtgenome=None, accession=None, file=None):
+    def __init__(self, name, location, type, color, join=None, mtgenome=None, accession=None, file=None, topology=None):
         self.name = name
         self.location = location
         self.type = type
@@ -20,6 +20,7 @@ class Feature:
         self.mtgenome = mtgenome
         self.accession = accession
         self.file = file
+        self.topology = topology
     def __repr__(self):
             return str(self.name)
     def __str__(self):
@@ -70,11 +71,11 @@ def get_species_name(string, abbr=True):
                 species = species.split(' ')[0][0] + '. ' + species.split(' ')[1] + ' ' + ' '.join(species.split(' ')[2:])
     return species
 
-def reinit_features(features, start = "tRNA-Phe"):
+def reinit_features(features, start = "tRNA-Phe", force_reoriented=False):
     logger = logging.getLogger(__name__) 
     logger.setLevel(logging.DEBUG)
     #logging.basicConfig(level=logging.DEBUG)
-    
+                                
     features_new = [features[0]]
     
     value = None
@@ -83,8 +84,13 @@ def reinit_features(features, start = "tRNA-Phe"):
             if feature.name == start:
                 value = feature.location.start
                 break
+                
     if value == None:
-        logger.warning(features[0].file+" does not contain " + start + ". Therefore, the rotation operation was not performed. Please check.")
+        logger.warning(features[0].file+" does not contain" + start + ". Therefore, the rotation operation was not performed. Please check.")
+        return features
+        
+    if force_reoriented == False:
+        logger.warning(features[0].file+" is linear topology. Reoriention is disabled by default, so no rotation operation was performed. To force reoriention, use the force_reoriented=True parameter.")
         return features
         
     _status = True
@@ -102,9 +108,10 @@ def reinit_features(features, start = "tRNA-Phe"):
                                       end=feature.location.end-value,
                                       strand=feature.location.strand)
             features_new.append(Feature(feature.name, location, feature.type, feature.color, feature.join))
+            
     tmp = [features_new[0]]
     tmp.extend(sorted(features_new[1:], key=lambda x:x.location.start))
-    f = Feature(features[0].name, features[0].location, features[0].type, features[0].color, features[0].join, rotate_seq(features[0].mtgenome, value), accession=features[0].accession, file=features[0].file)
+    f = Feature(features[0].name, features[0].location, features[0].type, features[0].color, features[0].join, rotate_seq(features[0].mtgenome, value), accession=features[0].accession, file=features[0].file, topology=features[0].topology)
     features_new = [f]
     index = 0
     for feature in tmp[1:]:
@@ -117,11 +124,10 @@ def reinit_features(features, start = "tRNA-Phe"):
                                       strand=feature.location.strand)
             features_new[index].location = location
             features_new[index].join = None
-
+            
     return features_new
-    
 
-def get_features(file, abbr=False, colors=None, isfilename2species=False, start="tRNA-Phe"):
+def get_features(file, abbr=False, colors=None, isfilename2species=False, start=None, force_reoriented=False):
     """
     Descripton:
         Parses a genbank file and returns a list of feature classes.
@@ -130,14 +136,15 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
         file: {str} one genbankfile or NCBI accession ID.
         abbr: {bool} whether to abbreviate species names.
         isfilename2species: {bool} whether filename convert to species.
-        start: {str} initial feature, such as, ND1, ND2, ND3, ND4, ND4L, ND5, ND6,
+        start: {None, str} initial feature, such as, ND1, ND2, ND3, ND4, ND4L, ND5, ND6,
                      COX1, COX2, COX3, ATPase6, ATPase8, Cytb, tRNA-His, tRNA-Pro,
                      tRNA-Thr, tRNA-Trp, tRNA-Met, tRNA-Asp, tRNA-Ala, tRNA-Gln,
                      tRNA-Ile, tRNA-Arg, tRNA-Tyr, tRNA-Phe, tRNA-Lys, tRNA-Gly,
                      tRNA-Asn, tRNA-Leu, tRNA-Glu, tRNA-Val, tRNA-Cys, tRNA-Ser,
-                     12S rRNA, 16S rRNA, D-loop.     
+                     12S rRNA, 16S rRNA, D-loop. default=None.   
         colors: {str, dict} themes such as, Chen, Tan, ogdraw, mitofish,
                             mitofish1, mitoz,  gggenes, chloroplot, grey, igv.
+        force_reoriented: {bool} force-reoriendted linear mtgenome.
     """
     if colors == None:
         colors = MTColors['MITOFISH']
@@ -152,6 +159,7 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
         handle = SeqIO.parse(get_genbank_from_ncbi(file), 'genbank') 
     #print(handle)
     for record in handle:
+        topology = record.annotations['topology'].lower()
         mtgenome = record.seq.upper()
         accession = record.id
         #print(file, record.id)
@@ -210,7 +218,7 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
                     
                 species_name = get_species_name(species_name, abbr=abbr)
                 features.append(Feature(name=species_name, location=i.location, type=i.type, color=colors.get('source', 'gray'),
-                                        mtgenome=mtgenome, accession=accession, file=file))
+                                        mtgenome=mtgenome, accession=accession, file=file, topology=topology))
                                         
             elif i.type in ['rRNA', 'tRNA', 'D_loop', 'D-loop']:
                 if gene_name in ['tRNA-His', 'tRNA-Pro', 'tRNA-Thr', 'tRNA-Trp', 'tRNA-Met', 'tRNA-Asp', 'tRNA-Ala', 'tRNA-Gln',
@@ -257,14 +265,16 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
     
     res.extend(sorted(features[1:], key=lambda x:x.location.start))
     
+    if res[0].topology == "linear":
+        res.append(Feature(name="Gap", type="Gap", color='black',
+                           join=None, mtgenome=None, accession=None, file=None, topology=None,
+                           location=SimpleLocation(start=len(res[0].mtgenome)-2, end=len(res[0].mtgenome)+1, strand=0))
+                  )	              
     if start !=None:
-        res = reinit_features(res, start = start)
+        res = reinit_features(res, start = start, force_reoriented=force_reoriented)
     return res
 
-
-
-
-def tidy_genbank(file, output=None, isfilename2species=False, start="tRNA-Phe", table=2):
+def tidy_genbank(file, output=None, isfilename2species=False, start=None, table=2):
     """
     Descripton:
         Use PyVAMR's powerful GenBank parser to reorganize the GenBank 
@@ -273,12 +283,12 @@ def tidy_genbank(file, output=None, isfilename2species=False, start="tRNA-Phe", 
     Parameters：
         file: {str} one genbankfile or NCBI accession ID.
         tabe: {int} codon tables. such as 1-6, 9-16, 21-33.
-        start: {str} initial feature, such as, ND1, ND2, ND3, ND4, ND4L, ND5, ND6,
+        start: {None, str} initial feature, such as, ND1, ND2, ND3, ND4, ND4L, ND5, ND6,
                      COX1, COX2, COX3, ATPase6, ATPase8, Cytb, tRNA-His, tRNA-Pro,
                      tRNA-Thr, tRNA-Trp, tRNA-Met, tRNA-Asp, tRNA-Ala, tRNA-Gln,
                      tRNA-Ile, tRNA-Arg, tRNA-Tyr, tRNA-Phe, tRNA-Lys, tRNA-Gly,
                      tRNA-Asn, tRNA-Leu, tRNA-Glu, tRNA-Val, tRNA-Cys, tRNA-Ser,
-                     12S rRNA, 16S rRNA, D-loop.
+                     12S rRNA, 16S rRNA, D-loop. default=None.
         output: {str} a path of genbank output file.
     """
     product = {'ND1': 'NADH dehydrogenase subunit 1',
@@ -344,7 +354,7 @@ def tidy_genbank(file, output=None, isfilename2species=False, start="tRNA-Phe", 
     
     #print(features)
     
-    gb_text = f"""LOCUS       {organism.replace(' ', '_')}                {genome_len} bp    DNA     circular     {time.strftime("%d-%b-%Y", time.localtime()).upper()}
+    gb_text = f"""LOCUS       {organism.replace(' ', '_')}                {genome_len} bp    DNA     {features[0].topology}     {time.strftime("%d-%b-%Y", time.localtime()).upper()}
 DEFINITION  .
 ACCESSION   .
 VERSION     .
@@ -371,7 +381,7 @@ FEATURES             Location/Qualifiers
                 pos = f"{str(feature.location.start+1)}..{str(feature.location.end)}"
             else:
                 pos = "join(" + ','.join( f"{i.start+1}..{i.end}"  for i in features[1].join.parts) + ")"
-        else:
+        elif feature.location.strand == -1:
             if feature.join == None:
                 #print(feature.join)
                 pos = f"complement({str(feature.location.start+1)}..{str(feature.location.end)})"

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name="pyvamr",
-      version="1.0.1",
+      version="1.0.2",
       description='A Python package for comparative visualization of animal mitochondrial genomes',
       url='https://github.com/thecgs/PyVAMR',
       author='Guisen Chen',
@@ -10,6 +10,5 @@ setup(name="pyvamr",
       license='MIT License',
       packages=find_packages(exclude=["doc", ".github"]),
       keywords=['bioinformatics', 'mitochondrial', 'genome', 'rearrangement'],
-      install_requires=["biopython",
-                        "matplotlib"]
+      install_requires=["biopython", "plotly", "matplotlib"]
      )

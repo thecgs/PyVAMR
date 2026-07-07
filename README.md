@@ -19,7 +19,7 @@ fig, ax = pyvamr.draw_circos_MT("NC_012920.1", colors="OGDRAW", output="./doc/Fi
 
 The result is shown in the figure below:
 
-![Schema of quickprot algorithm](doc/Fig.1.png#pic_center)
+![](doc/Fig.1.png#pic_center)
 
 <center>Fig.1 A circular mitogenome map in human</center>
 
@@ -73,7 +73,21 @@ draw_circos_MT(file, output=None, abbr=False, isfilename2species=False, colors='
 
 ### Example 2:
 
-According to a study by [Wang et al.](https://link.springer.com/article/10.1186/s40850-025-00239-x), compared with the ancestor of Stylommatophora, the mitochondrial genes of *M. pictum* exhibited multiple rearrangement events, while the mitochondrial genes of *S. arundinetorum* showed only minor differences. You can draw the two species separately for comparison (Fig. 2 A–B), or you can draw them together on the same figure, and using the [MitoFish](https://mitofish.aori.u-tokyo.ac.jp/annotation/draw) theme.
+For mitochondrial genomes that are not closed circles (e.g., due to incomplete assembly), the circular genome map displays a gap at the upper left.
+
+```python
+import pyvamr
+
+fig, ax = pyvamr.draw_circos_MT("MK804157", colors="OGDRAW", output="./doc/Fig.2.png", dpi=72)
+```
+
+![](doc/Fig.2.png#pic_center)
+
+<center>Fig.2 A circular mitogenome map in Compsulyx cochereaui</center>
+
+### Example 3:
+
+According to a study by [Wang et al.](https://link.springer.com/article/10.1186/s40850-025-00239-x), compared with the ancestor of Stylommatophora, the mitochondrial genes of *M. pictum* exhibited multiple rearrangement events, while the mitochondrial genes of *S. arundinetorum* showed only minor differences. You can draw the two species separately for comparison (Fig. 3 A–B), or you can draw them together on the same figure, and using the [MitoFish](https://mitofish.aori.u-tokyo.ac.jp/annotation/draw) theme.
 
 ```python
 import pyvamr
@@ -91,53 +105,76 @@ pyvamr.add_tag(axs=axs, by_row=True)
 
 axs[2].text(0.5, 0.5, s="Outer circle: Meghimatium pictum\nInner circle: Succinea arundinetorum", size=6, ha='center', va='center', style='italic')
 
-fig.savefig("./doc/Fig.2.png", bbox_inches='tight', dpi=72)
+fig.savefig("./doc/Fig.3.png", bbox_inches='tight', dpi=72)
 ```
 
 The result is shown in the figure below:
 
-![Schema of quickprot algorithm](doc/Fig.2.png#pic_center)
+![](doc/Fig.3.png#pic_center)
 
-<center>Fig.2 Three circular mitogenome map in two Stylommatophora species</center>
+<center>Fig.3 Three circular mitogenome map in two Stylommatophora species</center>
 
-### Example 3:
+### Example 4:
 
-Comparing the mitochondrial genomes of multiple species, Circos plots are clearly not the best choice; a study found that prevalent intraspecific gene rearrangements in [*Phrynocephalus*](https://www.mdpi.com/2073-4425/13/2/203). Below, we use a linear plot to visualize gene rearrangements. Use the gggenes theme and and open the circular mitochondrial genome at the specified site (such as, 12S rRNA).
+Comparing the mitochondrial genomes of multiple species, Circos plots are clearly not the best choice; Below, we use a linear plot to visualize gene rearrangements, and open the circular mitochondrial genome at the specified site (such as, ND1).  [Source of demo data](https://academic.oup.com/isd/article/3/6/12/5686061)
 
 ```python
 import pyvamr
 
-accessions = ["KJ551842", "MF039062", "MF039063", "MF039065", "KJ630904", "MF039061",
-              "MF039059", "MF039060", "MF039058", "KP126516", "MK284225", "KP232959",
-              "KJ885621", "KJ830752", "KP279760", "KM093859", "MF039064", "KJ749841",
-              "KM093858", "OL493803", "OL493804", "KC578685", "KC119493", "MK284224"]
-
-pyvamr.draw_linear_MT_nonproportional(accessions, start='12S rRNA', add_id=True, colors='GGGENES',
-                                      output="./doc/Fig.3.png", dpi=72)
+pyvamr.draw_linear_MT_nonproportional(files=["MK804148", "MK804158","MK804149", "MK804157"], 
+                      start='ND1', add_id=True, dpi=72, force_reoriented=True,
+                      output="./doc/Fig.4.png")
 ```
 
 The result is shown in the figure below:
 
-![Schema of quickprot algorithm](doc/Fig.3.png#pic_center)
+![](doc/Fig.4.png#pic_center)
 
-<center>Fig.3 Linear plot in Phrynocephalus species</center>
+<center>Fig.4 Linear plot of nonproportional</center>
 
-### Example 4：
+### Example 5：
 
-As shown in Fig.3, the genes are not drawn to scale. Below is a scaled drawing of the mitochondrial structure using the Tan theme.
+As shown in Fig.4, the genes are not drawn to scale. Below is a scaled drawing of the mitochondrial structure.
 
 ```python
 import pyvamr
 
-accessions = ["MF039060", "MF039058", "KP126516", "MK284225"]
-pyvamr.draw_linear_MT(accessions, start='12S rRNA', colors='Tan', add_id=True, output="./doc/Fig.4.png", dpi=72)
+pyvamr.draw_linear_MT(files=["MK804148", "MK804158","MK804149", "MK804157"], 
+                      start='ND1', add_id=True, dpi=72, force_reoriented=True,
+                      output="./doc/Fig.5.png")
 ```
 
 The result is shown in the figure below:
 
-![Schema of quickprot algorithm](doc/Fig.4.png#pic_center)
+![](doc/Fig.5.png#pic_center)
 
-<center>Fig.4 Linear plot of proportional in Phrynocephalus species</center>
+<center>Fig.5 Linear plot of proportional</center>
+
+### Example 6：
+
+When analyzing large-scale mitochondrial data—including gene overlaps and the identification of intergenic regions—it is necessary to dynamically display the locations of genes. Therefore, pyVAMR can also generate dynamic visualizations using Plotly.
+
+For nonproportional:
+
+```python
+import pyvamr
+
+pyvamr.draw_linear_MT_nonproportional_interactive(files=["MK804148", "MK804158","MK804149", "MK804157"], 
+                                                  start='COX1', add_id=True, force_reoriented=True,
+                                                  output="./doc/Fig.6.html")
+```
+
+<p><div style="width:100%; height:350px;border:none;text-align:center"><iframe allowtransparency="yes" frameborder="0" width="300" height="300" src="./doc/Fig.6.html"/></div></p>
+
+```python
+import pyvamr
+
+pyvamr.draw_linear_MT_interactive(files=["MK804148", "MK804158","MK804149", "MK804157"], 
+                                  start='COX1', add_id=True, force_reoriented=True,
+                                  output="./doc/Fig.7.html")
+```
+
+<p><div style="width:100%; height:350px;border:none;text-align:center"><iframe allowtransparency="yes" frameborder="0" width="300" height="300" src="./doc/Fig.7.html"/></div></p>
 
 ## Themes
 
@@ -158,12 +195,12 @@ for theme, ax in zip(themes, axes):
                               show_info=False, show_legend=False, show_GC_circos=False, axes=ax)
     ax.text(0.5, 0.5, s=theme, ha='center', va='center')
     
-fig.savefig("./doc/Fig.5.png", bbox_inches='tight', dpi=72)
+fig.savefig("./doc/Fig.8.png", bbox_inches='tight', dpi=72)
 ```
 
-![Schema of quickprot algorithm](doc/Fig.5.png#pic_center)
+![](doc/Fig.8.png#pic_center)
 
-<center>Fig.5 10 built-in themes</center>
+<center>Fig.8 10 built-in themes</center>
 
 ### Custom colors:
 
@@ -1249,3 +1286,11 @@ ORIGIN
 //
 </code></pre> 
 </details>
+
+
+
+
+
+
+
+
