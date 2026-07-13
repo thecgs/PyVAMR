@@ -16,7 +16,21 @@ CommonNamesDict = {'ND1': 'ND1',
                    'NAD4L': 'ND4L',
                    'NAD4': 'ND4',
                    'NAD5': 'ND5',
-                   'NAD6': 'ND6',        
+                   'NAD6': 'ND6',
+                   'NADH1':'ND1',
+                   'NADH2':'ND2',
+                   'NADH3':'ND3',
+                   'NADH4L':'ND4L',
+                   'NADH4':'ND4',
+                   'NADH5':'ND5',
+                   'NADH6':'ND6',
+                   'NADH DEHYDROGENASE 1':'ND1',
+                   'NADH DEHYDROGENASE 2':'ND2',
+                   'NADH DEHYDROGENASE 3':'ND3',
+                   'NADH DEHYDROGENASE 4L':'ND4L',
+                   'NADH DEHYDROGENASE 4':'ND4',
+                   'NADH DEHYDROGENASE 5':'ND5',
+                   'NADH DEHYDROGENASE 6':'ND6',
                    'NADH DEHYDROGENASE SUBUNIT 1': 'ND1',
                    'NADH DEHYDROGENASE SUBUNIT 2': 'ND2',
                    'NADH DEHYDROGENASE SUBUNIT 3': 'ND3',
@@ -30,24 +44,24 @@ CommonNamesDict = {'ND1': 'ND1',
                    'CO1': 'COX1',
                    'CO2': 'COX2',
                    'CO3': 'COX3',
-                   'COI': 'COX1',
-                   'COII': 'COX2',
                    'COIII': 'COX3',
-                   'COXI': 'COX1',
-                   'COXII': 'COX2',
+                   'COII': 'COX2',
+                   'COI': 'COX1',
                    'COXIII': 'COX3',
-                   'CYTOCHROME C OXIDASE SUBUNIT I': 'COX1',
-                   'CYTOCHROME C OXIDASE SUBUNIT II': 'COX2',
+                   'COXII': 'COX2',
+                   'COXI': 'COX1',
                    'CYTOCHROME C OXIDASE SUBUNIT III': 'COX3',
-                   'CYTOCHROME C OXIDASE SUBUNIT 1': 'COX1',
-                   'CYTOCHROME C OXIDASE SUBUNIT 2': 'COX2',
+                   'CYTOCHROME C OXIDASE SUBUNIT II': 'COX2',
+                   'CYTOCHROME C OXIDASE SUBUNIT I': 'COX1',
                    'CYTOCHROME C OXIDASE SUBUNIT 3': 'COX3',
-                   'CYTOCHROME OXIDASE SUBUNIT I': 'COX1',
-                   'CYTOCHROME OXIDASE SUBUNIT II': 'COX2',
+                   'CYTOCHROME C OXIDASE SUBUNIT 2': 'COX2',
+                   'CYTOCHROME C OXIDASE SUBUNIT 1': 'COX1',
                    'CYTOCHROME OXIDASE SUBUNIT III': 'COX3',
-                   'CYTOCHROME OXIDASE SUBUNIT 1': 'COX1',
-                   'CYTOCHROME OXIDASE SUBUNIT 2': 'COX2',
+                   'CYTOCHROME OXIDASE SUBUNIT II': 'COX2',
+                   'CYTOCHROME OXIDASE SUBUNIT I': 'COX1',
                    'CYTOCHROME OXIDASE SUBUNIT 3': 'COX3',
+                   'CYTOCHROME OXIDASE SUBUNIT 2': 'COX2',
+                   'CYTOCHROME OXIDASE SUBUNIT 1': 'COX1',
                    'ATP6':'ATPase6',
                    'ATP8':'ATPase8',                   
                    'ATPASE6':'ATPase6',
@@ -60,22 +74,43 @@ CommonNamesDict = {'ND1': 'ND1',
                    'ATP SYNTHASE FO SUBUNIT 8':'ATPase8',
                    'COB':'Cytb',
                    'CYTB':'Cytb',
+                   'CYTOCHROME':'Cytb',
                    'CYTOCHROME B':'Cytb',
                    'APOCYTOCHROME B':'Cytb',
                    'S-RRNA':'12S rRNA',
                    'L-RRNA':'16S rRNA',
+                   'RNS':'12S rRNA',
+                   'RNL':'16S rRNA',
                    'RRNS':'12S rRNA',
                    'RRNL':'16S rRNA',
-                   '12S RIBOSOMAL RNA':'12S rRNA',
-                   '16S RIBOSOMAL RNA':'16S rRNA',                   
-                   '12S RRNA':'12S rRNA',
-                   '16S RRNA':'16S rRNA',
-                   'SMALL SUBUNIT RIBOSOMAL RNA': '16S rRNA',
-                   'LARGE SUBUNIT RIBOSOMAL RNA': '12S rRNA',
                    'RRN12':'12S rRNA',
                    'RRN16':'16S rRNA',
                    'RNR1':'12S rRNA',
                    'RNR2':'16S rRNA',
+                   '12S': '12S rRNA',
+                   '16S': '16S rRNA',
+                   '12S RIBOSORMAL RNA': '12S rRNA',
+                   '16S RIBOSORMAL RNA': '16S rRNA',
+                   '12S RIBOSOMAL RNA':'12S rRNA',
+                   '16S RIBOSOMAL RNA':'16S rRNA',        
+                   '12S RRNA': '12S rRNA',
+                   '16S RRNA': '16S rRNA',
+                   '12S RRN': '12S rRNA',
+                   '16S RRN': '16S rRNA',
+                   '12SRRNA': '12S rRNA',
+                   '16SRRNA': '16S rRNA',
+                   '12SRRN': '12S rRNA',
+                   '16SRRN': '16S rRNA',
+                   'SMALL RIBOSOMAL RNA':'12S rRNA',
+                   'LARGE RIBOSOMAL RNA':'16S rRNA',
+                   'SMALL SUBUNIT RIBOSORMAL RNA': '12S rRNA',
+                   'LARGE SUBUNIT RIBOSORMAL RNA': '16S rRNA',
+                   'SMALL SUBUNIT RIBOSOMAL RNA': '12S rRNA',
+                   'LARGE SUBUNIT RIBOSOMAL RNA': '16S rRNA',
+                   'SSU RRNA': '12S rRNA',
+                   'LSU RRNA': '16S rRNA',
+                   'S-RNA': '12S rRNA',
+                   'L-RNA': '16S rRNA',
                    'D-LOOP':'D-loop',
                    'D_LOOP':'D-loop',
                    'PUTATIVE CONTROL REGION':'D-loop',
@@ -129,11 +164,32 @@ CommonNamesDict = {'ND1': 'ND1',
                    'TRNE(UUC)': 'tRNA-Glu',
                    'TRNT(UGU)': 'tRNA-Thr',
                    'TRNP(UGG)': 'tRNA-Pro',
+                   'TRNF(GAA)': 'tRNA-Phe',
+                   'TRNV(TAC)': 'tRNA-Val',
+                   'TRNL(TAA)': 'tRNA-Leu',
+                   'TRNI(GAT)': 'tRNA-Ile',
+                   'TRNQ(TTG)': 'tRNA-Gln',
+                   'TRNM(CAT)': 'tRNA-Met',
+                   'TRNW(TCA)': 'tRNA-Trp',
+                   'TRNA(TGC)': 'tRNA-Ala',
+                   'TRNN(GTT)': 'tRNA-Asn',
+                   'TRNY(GTA)': 'tRNA-Tyr',
+                   'TRNS(TGA)': 'tRNA-Ser',
+                   'TRND(GTC)': 'tRNA-Asp',
+                   'TRNK(TTT)': 'tRNA-Lys',
+                   'TRNG(TCC)': 'tRNA-Gly',
+                   'TRNR(TCG)': 'tRNA-Arg',
+                   'TRNH(GTG)': 'tRNA-His',
+                   'TRNS(GCT)': 'tRNA-Ser',
+                   'TRNL(TAG)': 'tRNA-Leu',
+                   'TRNE(TTC)': 'tRNA-Glu',
+                   'TRNT(TGT)': 'tRNA-Thr',
+                   'TRNP(TGG)': 'tRNA-Pro',
                    'TRNF': 'tRNA-Phe',
                    'TRNV': 'tRNA-Val',
-                   'TRNL': 'tRNA-Leu',
-                   'TRNL1': 'tRNA-Leu',
                    'TRNL2': 'tRNA-Leu',
+                   'TRNL1': 'tRNA-Leu',
+                   'TRNL': 'tRNA-Leu',
                    'TRNI': 'tRNA-Ile',
                    'TRNQ': 'tRNA-Gln',
                    'TRNM': 'tRNA-Met',
@@ -142,9 +198,9 @@ CommonNamesDict = {'ND1': 'ND1',
                    'TRNN': 'tRNA-Asn',
                    'TRNC': 'tRNA-Cys',
                    'TRNY': 'tRNA-Tyr',
-                   'TRNS': 'tRNA-Ser',
-                   'TRNS1': 'tRNA-Ser',
                    'TRNS2': 'tRNA-Ser',
+                   'TRNS1': 'tRNA-Ser',
+                   'TRNS': 'tRNA-Ser',
                    'TRND': 'tRNA-Asp',
                    'TRNK': 'tRNA-Lys',
                    'TRNG': 'tRNA-Gly',
@@ -232,7 +288,8 @@ MTColors_by_default = {'source':"#000000",
             'tRNA-Ser':'#162983',
             '12S rRNA':'#E2001A',
             '16S rRNA':'#E2001A',
-            'D-loop':'#9C9C9C'
+            'D-loop':'#9C9C9C',
+            'Other genes': '#00FFFF',
            }
            
 MTColors_by_OGDRAW = {'source':"#000000",
@@ -271,7 +328,8 @@ MTColors_by_OGDRAW = {'source':"#000000",
                       'tRNA-Ser':'#162983ff',
                       '12S rRNA':'#e2001aff',
                       '16S rRNA':'#e2001aff',
-                      'D-loop':'#ff8080ff'
+                      'D-loop':'#ff8080ff',
+                      'Other genes': '#57B9A8',
                      }
                      
 MTColors_by_MitoFish = {'source':"#000000",
@@ -310,7 +368,8 @@ MTColors_by_MitoFish = {'source':"#000000",
                       'tRNA-Ser':'#172c7fb2',
                       '12S rRNA':'#d1382ab2',
                       '16S rRNA':'#d1382ab2',
-                      'D-loop':'#7d7d7db2'
+                      'D-loop':'#7d7d7db2',
+                      'Other genes': '#00FFFF',
                      }
                      
 MTColors_by_MitoFish1 = {'source':"#000000",
@@ -349,7 +408,8 @@ MTColors_by_MitoFish1 = {'source':"#000000",
                          'tRNA-Ser':'#172c7fff',
                          '12S rRNA':'#d1382aff',
                          '16S rRNA':'#d1382aff',
-                         'D-loop':'#7d7d7dff'
+                         'D-loop':'#7d7d7dff',
+                         'Other genes': '#00FFFF',
                      }
                      
 MTColors_by_Tan = {'source':"#000000",
@@ -388,7 +448,8 @@ MTColors_by_Tan = {'source':"#000000",
                    'tRNA-Ser':'#f3d78aff',
                    '12S rRNA':'#c74546ff',
                    '16S rRNA':'#c74546ff',
-                   'D-loop':'#3d4e6aff'
+                   'D-loop':'#3d4e6aff',
+                   'Other genes': '#CAA1CB',
                   }
 
 MTColors_by_MitoZ = {'source':"#000000",
@@ -427,7 +488,8 @@ MTColors_by_MitoZ = {'source':"#000000",
                    'tRNA-Ser':'#fb8072ff',
                    '12S rRNA':'#fdc086ff',
                    '16S rRNA':'#fdc086ff',
-                   'D-loop':'#969696ff'
+                   'D-loop':'#969696ff',
+                   'Other genes': '#00FFFF',
                   }
                   
 MTColors_by_Chloroplot = {'source':"#000000",
@@ -466,7 +528,8 @@ MTColors_by_Chloroplot = {'source':"#000000",
                           'tRNA-Ser':'#82B6E2',
                           '12S rRNA':'#D1382A',
                           '16S rRNA':'#D1382A',
-                          'D-loop':'#7D7D7D'
+                          'D-loop':'#7D7D7D',
+                          'Other genes': '#00FFFF',
                          }
 
 MTColors_by_Grey = {'source':"#000000",
@@ -505,7 +568,8 @@ MTColors_by_Grey = {'source':"#000000",
                           'tRNA-Ser':'#D3D3D3',
                           '12S rRNA':'#212121',
                           '16S rRNA':'#212121',
-                          'D-loop':'#333333'
+                          'D-loop':'#333333',
+                          'Other genes': '#808080ff',
                          }
 
 
@@ -545,7 +609,8 @@ MTColors_by_IGV = {'source':"#000000",
                     'tRNA-Ser':'#4775FFFF',
                     '12S rRNA':'#FFC20AFF',
                     '16S rRNA':'#FFD147FF',
-                    'D-loop':  '#990033FF'
+                    'D-loop':  '#990033FF',
+                    'Other genes': '#808080ff',
                    }
 
 MTColors_by_Set3 = {'source':"#000000",
@@ -584,7 +649,8 @@ MTColors_by_Set3 = {'source':"#000000",
                     'tRNA-Ser':'#FFFFB3',
                     '12S rRNA':'#FB8072',
                     '16S rRNA':'#FB8072',
-                    'D-loop': '#E5C494'
+                    'D-loop': '#E5C494',
+                    'Other genes': '#B3DE69',
                    }
 
 legend_elements_DEFAULT = [Patch(facecolor='#FFEC00', edgecolor='black', label='Complex I (NADH dehydrogenase)'),
@@ -593,7 +659,8 @@ legend_elements_DEFAULT = [Patch(facecolor='#FFEC00', edgecolor='black', label='
                            Patch(facecolor='#AB259D', edgecolor='black', label='Cytochrome b'),
                            Patch(facecolor='#162983', edgecolor='black', label='transfer RNA'),
                            Patch(facecolor='#E2001A', edgecolor='black', label='ribosomal RNA'),
-                           Patch(facecolor='#9C9C9C', edgecolor='black', label='D-loop (Non-coding region)')
+                           Patch(facecolor='#9C9C9C', edgecolor='black', label='D-loop (Non-coding region)'),
+                           Patch(facecolor='#00FFFF', edgecolor='black', label='Other genes')
                           ]
 
 legend_elements_OGDRAW = [Patch(facecolor='#ffec00ff', edgecolor='black', label='Complex I (NADH dehydrogenase)'),
@@ -602,7 +669,8 @@ legend_elements_OGDRAW = [Patch(facecolor='#ffec00ff', edgecolor='black', label=
                           Patch(facecolor='#ab259dff', edgecolor='black', label='Cytochrome b'),
                           Patch(facecolor='#162983ff', edgecolor='black', label='transfer RNA'),
                           Patch(facecolor='#e2001aff', edgecolor='black', label='ribosomal RNA'),
-                          Patch(facecolor='#ff8080ff', edgecolor='black', label='D-loop (Non-coding region)')
+                          Patch(facecolor='#ff8080ff', edgecolor='black', label='D-loop (Non-coding region)'),
+                          Patch(facecolor='#57B9A8', edgecolor='black', label='Other genes')
                          ]
 
 
@@ -612,7 +680,8 @@ legend_elements_MitoFish = [Patch(facecolor='#2a6332b2', edgecolor='black', labe
                             Patch(facecolor='#299E96', edgecolor='black', label='Cytochrome b'),
                             Patch(facecolor='#172c7fb2', edgecolor='black', label='transfer RNA'),
                             Patch(facecolor='#d1382ab2', edgecolor='black', label='ribosomal RNA'),
-                            Patch(facecolor='#7d7d7db2', edgecolor='black', label='D-loop (Non-coding region)')
+                            Patch(facecolor='#7d7d7db2', edgecolor='black', label='D-loop (Non-coding region)'),
+                            Patch(facecolor='#00FFFF', edgecolor='black', label='Other genes')
                            ]  
 
 
@@ -622,7 +691,8 @@ legend_elements_MitoFish1 = [Patch(facecolor='#2a6332ff', edgecolor='black', lab
                             Patch(facecolor='#299E96', edgecolor='black', label='Cytochrome b'),
                             Patch(facecolor='#172c7fff', edgecolor='black', label='transfer RNA'),
                             Patch(facecolor='#d1382aff', edgecolor='black', label='ribosomal RNA'),
-                            Patch(facecolor='#7d7d7dff', edgecolor='black', label='D-loop (Non-coding region)')
+                            Patch(facecolor='#7d7d7dff', edgecolor='black', label='D-loop (Non-coding region)'),
+                            Patch(facecolor='#00FFFF', edgecolor='black', label='Other genes')
                            ]
 
 legend_elements_Tan = [Patch(facecolor='#88c4e8ff', edgecolor='black', label='Complex I (NADH dehydrogenase)'),
@@ -631,13 +701,15 @@ legend_elements_Tan = [Patch(facecolor='#88c4e8ff', edgecolor='black', label='Co
                        Patch(facecolor='#d9dee7ff', edgecolor='black', label='Cytochrome b'),
                        Patch(facecolor='#f3d78aff', edgecolor='black', label='transfer RNA'),
                        Patch(facecolor='#c74546ff', edgecolor='black', label='ribosomal RNA'),
-                       Patch(facecolor='#3d4e6aff', edgecolor='black', label='D-loop (Non-coding region)')
+                       Patch(facecolor='#3d4e6aff', edgecolor='black', label='D-loop (Non-coding region)'),
+                       Patch(facecolor='#CAA1CB', edgecolor='black', label='Other genes')
                       ]
 
 legend_elements_MitoZ = [Patch(facecolor='#8dd3c7ff', edgecolor='black', label='Protein codon genes'),
                          Patch(facecolor='#fb8072ff', edgecolor='black', label='transfer RNA genes'),
                          Patch(facecolor='#fdc086ff', edgecolor='black', label='ribosomal RNA genes'),
-                         Patch(facecolor='#969696ff', edgecolor='black', label='D-loop (Non-coding region)')
+                         Patch(facecolor='#969696ff', edgecolor='black', label='D-loop (Non-coding region)'),
+                         Patch(facecolor='#00FFFF', edgecolor='black', label='Other genes')
                         ]
 
 legend_elements_Chloroplot = [Patch(facecolor='#4C8805', edgecolor='black', label='Complex I (NADH dehydrogenase)'),
@@ -646,7 +718,8 @@ legend_elements_Chloroplot = [Patch(facecolor='#4C8805', edgecolor='black', labe
                        Patch(facecolor='#71B8A9', edgecolor='black', label='Cytochrome b'),
                        Patch(facecolor='#82B6E2', edgecolor='black', label='transfer RNA'),
                        Patch(facecolor='#D1382A', edgecolor='black', label='ribosomal RNA'),
-                       Patch(facecolor='#7D7D7D', edgecolor='black', label='D-loop (Non-coding region)')
+                       Patch(facecolor='#7D7D7D', edgecolor='black', label='D-loop (Non-coding region)'),
+                       Patch(facecolor='#00FFFF', edgecolor='black', label='Other genes')
 ]
 
 legend_elements_Grey = [Patch(facecolor='#555555', edgecolor='black', label='Complex I (NADH dehydrogenase)'),
@@ -655,7 +728,8 @@ legend_elements_Grey = [Patch(facecolor='#555555', edgecolor='black', label='Com
                        Patch(facecolor='#808080', edgecolor='black', label='Cytochrome b'),
                        Patch(facecolor='#D3D3D3', edgecolor='black', label='transfer RNA'),
                        Patch(facecolor='#212121', edgecolor='black', label='ribosomal RNA'),
-                       Patch(facecolor='#333333', edgecolor='black', label='D-loop (Non-coding region)')
+                       Patch(facecolor='#333333', edgecolor='black', label='D-loop (Non-coding region)'),
+                       Patch(facecolor='#808080ff', edgecolor='black', label='Other genes')
 ]
 
 
@@ -665,7 +739,8 @@ legend_elements_Set3 = [Patch(facecolor='#8DD3C7', edgecolor='black', label='Com
                        Patch(facecolor='#80B1D3', edgecolor='black', label='Cytochrome b'),
                        Patch(facecolor='#FFFFB3', edgecolor='black', label='transfer RNA'),
                        Patch(facecolor='#FB8072', edgecolor='black', label='ribosomal RNA'),
-                       Patch(facecolor='#E5C494', edgecolor='black', label='D-loop (Non-coding region)')
+                       Patch(facecolor='#E5C494', edgecolor='black', label='D-loop (Non-coding region)'),
+                       Patch(facecolor='#B3DE69', edgecolor='black', label='Other genes')
 ]
 
 legend_elements_IGV = [Patch(facecolor=MTColors_by_IGV[i], edgecolor='black', label=i) for i in MTColors_by_IGV if i!="source"]

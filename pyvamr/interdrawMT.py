@@ -88,6 +88,8 @@ class InteractiveMTVisualizer:
         return head_length, tail_length, box_width, text_offset
 
     def _get_colors_group(self, colors):
+    
+    
         res = {}
         if colors.upper() == "MITOZ":
             for gene in MTColors[colors.upper()]:
@@ -102,6 +104,8 @@ class InteractiveMTVisualizer:
                     res[gene] = {'group':'ribosomal RNA genes'}
                 elif gene in ['D-loop']:
                     res[gene] = {'group':'D-loop (Non-coding region)'}
+                else:
+                    res[gene] = {'group':'Other genes'}
                     
         elif colors.upper() in ["CHEN", "OGDRAW", "MITOFISH", "MITOFISH1", "TAN", "CHLOROPLOT", "GREY", "GGGENES"]:
             for gene in MTColors[colors.upper()]:
@@ -122,7 +126,8 @@ class InteractiveMTVisualizer:
                     res[gene] = {'group':'ribosomal RNA'}
                 elif gene in ['D-loop']:
                     res[gene] = {'group':'D-loop (Non-coding region)'}
-                    
+                else:
+                    res[gene] = {'group':'Other genes'}
         else:
             if colors.upper() == "IGV":
                 for gene in MTColors[colors.upper()]:
@@ -134,6 +139,18 @@ class InteractiveMTVisualizer:
         res['Gap'] =  {'group':"Gap"}
         return res
         
+    def remove_join(self, features):
+        tmp = []
+        res = []
+        for feature in features:
+            if feature.join!=None:
+                if feature.join not in tmp:
+                    res.append(feature)
+                    tmp.append(feature.join)
+            else:
+                res.append(feature)
+        return res
+    
     def draw_linear_MT_nonproportional_plotly(self,
                                               files,
                                               output=None,
@@ -190,6 +207,7 @@ class InteractiveMTVisualizer:
         genomes = []
         for file in reversed(files):
             features = get_features(file, abbr=abbr, isfilename2species=isfilename2species, colors=colors, start=start, force_reoriented=force_reoriented)
+            features = self.remove_join(features)
             genomes.append(features)
         
         y_positions = []
@@ -213,19 +231,27 @@ class InteractiveMTVisualizer:
                 start_pos = int(feature.location.start) + 1
                 end_pos = int(feature.location.end)
                 length = end_pos - start_pos + 1
-                hover_text = f"""
-                Gene Name: {feature.name}<br>
-                Position: {start_pos:}-{end_pos}{'(+) ' if feature.location.strand == 1 else '(-) '}
-                """
+                
+                if feature.join == None:
+                    hover_text = f"""Gene Name: {feature.name}<br>Position: {start_pos:}-{end_pos}{'(+) ' if feature.location.strand == 1 else '(-) '}"""
+                else:
+                    hover_text = f"""Gene Name: {feature.name}<br>Position: {str(feature.join)}"""
+                    
                 head_length, tail_length, box_width, text_offset = self._get_box_param(FullName2AbbrName.get(feature.name, feature.name))
                 fill_color = self._convert_color(feature.color)
                 height = 0.5
                 
-                if color2groups[feature.name].get('group', "Other") not in tmp_groups:
+                #if color2groups[feature.name].get('group', "Other") not in tmp_groups:
+                #    showlegend = True
+                #else:
+                #    showlegend = False
+                
+                group_name = color2groups[feature.name]['group'] if feature.name in color2groups else color2groups["Other genes"]['group']
+                if group_name not in tmp_groups:
                     showlegend = True
                 else:
                     showlegend = False
-                    
+                
                 if feature.location.strand == 1:
                     fig.add_trace(go.Scatter(
                         x=[x_position, 
@@ -244,8 +270,8 @@ class InteractiveMTVisualizer:
                         fill="toself",
                         fillcolor=fill_color,
                         line=dict(color='black', width=1),
-                        name=color2groups[feature.name].get('group', "Other"),
-                        legendgroup=color2groups[feature.name].get('group', "Other"),
+                        name=group_name,
+                        legendgroup=group_name,
                         hoverinfo='skip',
                         #hoverinfo='text',
                         #hoveron='points+fills',
@@ -254,7 +280,7 @@ class InteractiveMTVisualizer:
                         #                align='left',
                         #                namelength=-1),
                         #hovertext=hover_text,
-                        showlegend=showlegend
+                        showlegend=showlegend,
                     ))
                     
                     fig.add_annotation(
@@ -290,8 +316,8 @@ class InteractiveMTVisualizer:
                         fill="toself",
                         fillcolor=fill_color,
                         line=dict(color='black', width=1),
-                        name=color2groups[feature.name].get('group', "Other"),
-                        legendgroup=color2groups[feature.name].get('group', "Other"),
+                        name=group_name,
+                        legendgroup=group_name,
                         hoverinfo='skip',
                         #hoverinfo='text',
                         #hoveron='points+fills',
@@ -354,7 +380,7 @@ class InteractiveMTVisualizer:
                             x_position += self._get_box_param(FullName2AbbrName.get(features[1:][i].name, features[1:][i].name))[2]
 
                             
-                tmp_groups.add(color2groups[feature.name].get('group', "Other"))
+                tmp_groups.add(group_name)
                 
         layout_dict = {#'template':'ggplot2',
             'font':  dict(size=12),
@@ -504,15 +530,18 @@ class InteractiveMTVisualizer:
                 end_pos = int(feature.location.end)                
                 #length = end_pos - start_pos + 1
                 fill_color = self._convert_color(feature.color)
-                hover_text = f"""
-                Gene Name: {feature.name}<br>
-                Position: {start_pos:}-{end_pos}{'(+) ' if feature.location.strand == 1 else '(-) '}
-                """
+                hover_text = f"""Gene Name: {feature.name}<br>Position: {start_pos+1}-{end_pos}{'(+) ' if feature.location.strand == 1 else '(-) '}"""
                 if _staus_brake_tmp:
                     start_pos += 200
                     end_pos += 200
                 
-                if color2groups[feature.name].get('group', "Other") not in tmp_groups:
+                #if color2groups[feature.name].get('group', "Other") not in tmp_groups:
+                #    showlegend = True
+                #else:
+                #    showlegend = False
+                    
+                group_name = color2groups[feature.name]['group'] if feature.name in color2groups else color2groups["Other genes"]['group']
+                if group_name not in tmp_groups:
                     showlegend = True
                 else:
                     showlegend = False
@@ -542,8 +571,8 @@ class InteractiveMTVisualizer:
                         y=[medial_axis+0.5, medial_axis+0.5, medial_axis, medial_axis, medial_axis+0.5],
                         fill="toself",
                         mode='lines',
-                        legendgroup=color2groups[feature.name].get('group', "Other"),
-                        name=color2groups[feature.name].get('group', "Other"),
+                        legendgroup=group_name,
+                        name=group_name,
                         fillcolor=fill_color,
                         line=dict(color='black', width=1),
                         hoverinfo='skip',
@@ -596,10 +625,10 @@ class InteractiveMTVisualizer:
                         y=[medial_axis, medial_axis, medial_axis-0.5, medial_axis-0.5, medial_axis],
                         fill="toself",
                         mode='lines',
-                        name=color2groups[feature.name].get('group', "Other"),
+                        name=group_name,
                         fillcolor=fill_color,
                         line=dict(color='black', width=1),
-                        legendgroup=color2groups[feature.name].get('group', "Other"),
+                        legendgroup=group_name,
                         hoverinfo='skip',
                         #hoverinfo='text',
                         #hoveron='points+fills',
@@ -671,7 +700,7 @@ class InteractiveMTVisualizer:
                         showlegend=False,
                     ), row=row, col=1)
 		    
-                tmp_groups.add(color2groups[feature.name].get('group', "Other"))
+                tmp_groups.add(group_name)
                 
         for i in range(1, len(files)+1):
             fig.update_yaxes(range=[-1, 1],

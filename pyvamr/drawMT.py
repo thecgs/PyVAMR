@@ -18,7 +18,10 @@ def rotation_text(theta):
         return  90 -d + 180
 
 def get_GC(seq):
-    return round((seq.count("G") + seq.count("C")) / (seq.count("A") + seq.count("T") + seq.count("G") + seq.count("C"))*100, 2)     
+    try:
+        return round((seq.count("G") + seq.count("C")) / (seq.count("A") + seq.count("T") + seq.count("G") + seq.count("C"))*100, 2)
+    except ZeroDivisionError:
+        return 0 
 
 def get_GC_bar_param(features, bin=50, step=50):
     x = []
@@ -55,7 +58,8 @@ def stat_features(features):
             tRNA_count += 1
         elif re.search('rRNA', feature.name) and feature.join==None:
             rRNA_count += 1
-        elif re.search('COX|ATP|Cytb|ND', feature.name) and feature.join==None:
+        elif feature.type == 'CDS' and feature.join==None:
+        #elif re.search('COX|ATP|Cytb|ND', feature.name) and feature.join==None:
             PCG_count += 1
 
     tmp = []
@@ -70,7 +74,8 @@ def stat_features(features):
             tRNA_count += 1
         elif re.search('rRNA', feature.name):
             rRNA_count += 1
-        elif re.search('COX|ATP|Cytb|ND', feature.name):
+        elif feature.type == 'CDS':
+        #elif re.search('COX|ATP|Cytb|ND', feature.name):
             PCG_count += 1
     return tRNA_count, rRNA_count, PCG_count
 
@@ -139,7 +144,7 @@ def draw_circos_MT(file,
         add_id: {bool} Species add to accession id from NCBI.
         dpi: {int} dpi value. the resolution in dots per inch.
     """
-    
+    add_other_genes = False
     if axes==None:
         fig, ax = plt.subplots(1,1, subplot_kw={'projection':'polar'}, figsize=figsize)
     else:
@@ -154,7 +159,7 @@ def draw_circos_MT(file,
     ax.set_xticklabels([])
     
     features = get_features(file, abbr=abbr, isfilename2species=isfilename2species, colors=colors, start=start)
-    
+    add_other_genes = is_othergenes(features)
     try:
         #str(features[0].mtgenome)  # UndefinedSequenceError
         GC = get_GC(features[0].mtgenome)
@@ -242,6 +247,9 @@ def draw_circos_MT(file,
     elif isinstance(colors, dict):
         legend_elements = [Patch(facecolor=colors[i], edgecolor='black', label=i) for i in colors if i!="source"]
         ncol = 4
+    
+    if add_other_genes == False:
+        legend_elements = legend_elements[:-1]
     
     if show_legend:
         ax.legend(handles=legend_elements,
@@ -340,6 +348,20 @@ def _get_mt_rect_ax(ax, features, show_info=True, info_fontsize=10, show_gene_la
             ax.text(genome_length+200, 0.47, s=str(genome_length)+'bp', ha='left', fontsize=info_fontsize)
     return _staus_brake
 
+def is_othergenes(features):
+    res = False
+    for feature in features[1:]:
+        if feature.name not in ['ND1', 'ND2', 'ND3', 'ND4L', 'ND4', 'ND5', 'ND6',
+     'COX1', 'COX2', 'COX3', 'ATPase6', 'ATPase8', 'Cytb', 'tRNA-His',
+     'tRNA-Pro', 'tRNA-Thr', 'tRNA-Trp', 'tRNA-Met', 'tRNA-Asp',
+     'tRNA-Ala', 'tRNA-Gln', 'tRNA-Ile', 'tRNA-Arg', 'tRNA-Tyr', 
+     'tRNA-Phe', 'tRNA-Lys', 'tRNA-Gly', 'tRNA-Asn', 'tRNA-Leu',
+     'tRNA-Glu', 'tRNA-Val', 'tRNA-Cys', 'tRNA-Ser', '12S rRNA',
+     '16S rRNA', 'D-loop']:
+            #print(feature.name)
+            res = True
+    return res
+
 def draw_linear_MT(files,
                    output=None,
                    abbr=False,
@@ -403,7 +425,9 @@ def draw_linear_MT(files,
         dpi: {int} dpi value. the resolution in dots per inch.
         force_reoriented: {bool} force-reoriendted linear mtgenome.
     """    
-
+    
+    add_other_genes = False
+    
     if not (isinstance(files, list)) and (not isinstance(files, tuple)):
         files = [files]
     
@@ -411,6 +435,8 @@ def draw_linear_MT(files,
     genomes = []
     for file in files:
         features = get_features(file, abbr=abbr, isfilename2species=isfilename2species, colors=colors, start=start, force_reoriented=force_reoriented)
+        
+        add_other_genes = is_othergenes(features)
         if tidyname:
             for i, f in enumerate(features):
                 features[i].name = FullName2AbbrName.get(f.name, f.name)
@@ -456,6 +482,9 @@ def draw_linear_MT(files,
                                       markeredgecolor='white', label="// Break"
                                      )
                               ] + legend_elements
+            
+        if add_other_genes == False:
+            legend_elements = legend_elements[:-1]
             
         ax[-1].legend(handles=legend_elements,
                       loc='upper right', 
@@ -507,6 +536,19 @@ def get_box_param(genename):
     box_width = head_length + tail_length
     return head_length, tail_length, box_width, text_offset
     
+    
+def remove_join(features):
+    tmp = []
+    res = []
+    for feature in features:
+        if feature.join!=None:
+            if feature.join not in tmp:
+                res.append(feature)
+                tmp.append(feature.join)
+        else:
+            res.append(feature)
+    return res
+    
 def draw_linear_MT_nonproportional(files,
                                    output=None,
                                    abbr=False,
@@ -556,14 +598,16 @@ def draw_linear_MT_nonproportional(files,
         dpi: {int} dpi value. the resolution in dots per inch.
         force_reoriented: {bool} force-reoriendted linear mtgenome.
     """
-    
+    add_other_genes = False
     if not (isinstance(files, list)) and (not isinstance(files, tuple)):
         files = [files]
     
     genomes = []
     for file in reversed(files):
         features = get_features(file, abbr=abbr, isfilename2species=isfilename2species, colors=colors, start=start, force_reoriented=force_reoriented)
+        features = remove_join(features)
         genomes.append(features)
+        add_other_genes = is_othergenes(features)
     
     if axes == None:
         fig, ax= plt.subplots(1, 1, figsize=(20, len(genomes)/2))
@@ -672,6 +716,8 @@ def draw_linear_MT_nonproportional(files,
             legend_elements.extend([Patch(facecolor=colors[i], edgecolor='black', label=i) for i in colors if i!="source"])
             ncol = 12
             
+        if add_other_genes == False:
+            legend_elements = legend_elements[:-1]
         ax.legend(handles=legend_elements,
                   loc='upper right', 
                   bbox_to_anchor=legend_postion, 

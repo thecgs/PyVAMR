@@ -96,10 +96,10 @@ import  matplotlib.pyplot as plt
 fig, axs = plt.subplots(1, 3, figsize=(20, 20/3), subplot_kw={'projection':'polar'})
 plt.subplots_adjust(wspace=0.3)
 
-pyvamr.draw_circos_MT(file="OP311642", colors="MitoFish", radius=20, gene_label_fontsize=5, gene_label_inner=False, show_info=True, show_legend=False, axes=axs[0], info_fontsize=6)
-pyvamr.draw_circos_MT(file="OP289102", colors="MitoFish", radius=20, gene_label_fontsize=5, gene_label_inner=False, show_info=True, show_legend=False, axes=axs[1], info_fontsize=6)
-pyvamr.draw_circos_MT(file="OP311642", colors="MitoFish", radius=20, gene_label_fontsize=5, gene_label_inner=False, show_info=False,show_legend=False, show_GC_circos=False, axes=axs[2])
-pyvamr.draw_circos_MT(file="OP289102", colors="MitoFish", radius=12, gene_label_fontsize=4, show_gene_label=True,   show_info=False,show_legend=False, show_GC_circos=False, axes=axs[2])
+pyvamr.draw_circos_MT(file="OP311642", colors="MitoFish", radius=20, gene_label_size=5, gene_label_inner=False, show_info=True, show_legend=False, axes=axs[0], info_fontsize=6)
+pyvamr.draw_circos_MT(file="OP289102", colors="MitoFish", radius=20, gene_label_size=5, gene_label_inner=False, show_info=True, show_legend=False, axes=axs[1], info_fontsize=6)
+pyvamr.draw_circos_MT(file="OP311642", colors="MitoFish", radius=20, gene_label_size=5, gene_label_inner=False, show_info=False,show_legend=False, show_GC_circos=False, axes=axs[2])
+pyvamr.draw_circos_MT(file="OP289102", colors="MitoFish", radius=12, gene_label_size=4, show_gene_label=True,   show_info=False,show_legend=False, show_GC_circos=False, axes=axs[2])
 
 pyvamr.add_tag(axs=axs, by_row=True)
 
@@ -159,9 +159,8 @@ For nonproportional:
 ```python
 import pyvamr
 
-pyvamr.draw_linear_MT_nonproportional_interactive(files=["MK804148", "MK804158","MK804149", "MK804157"], 
-                                                  start='COX1', add_id=True, force_reoriented=True,
-                                                  output="./doc/Fig.6.html")
+pyvamr.draw_linear_MT_nonproportional_interactive(files=["MK804148", "MK804158", "MK804149", "MK804157"],
+                                                  start='COX1', add_id=True, force_reoriented=True,output="./doc/Fig.6.html")
 ```
 
 [Veiw Fig.6.html](https://html-preview.github.io/?url=https://github.com/thecgs/PyVAMR/blob/main/doc/Fig.6.html)
