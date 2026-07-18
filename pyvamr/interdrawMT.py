@@ -375,7 +375,7 @@ class InteractiveMTVisualizer:
                     
                     if i+1 < len(features[1:]):
                         if features[1:][i+1].location.strand == -1:
-                            x_position +=  self._get_box_param(FullName2AbbrName.get(features[1:][i+1].name, features[1:][i+1].name))[2]
+                            x_position +=  self._get_box_param(FullName2AbbrName.get(features[1:][i+1].name, features[1:][i+1].name))[2] + self._get_box_param(FullName2AbbrName.get(features[1:][i].name, features[1:][i].name))[2]
                         else:
                             x_position += self._get_box_param(FullName2AbbrName.get(features[1:][i].name, features[1:][i].name))[2]
 

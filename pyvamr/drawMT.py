@@ -661,7 +661,7 @@ def draw_linear_MT_nonproportional(files,
                 
                 if i+1 < len(features[1:]):
                     if features[1:][i+1].location.strand == -1:
-                        x += get_box_param(features[1:][i+1].name)[2]
+                        x += get_box_param(features[1:][i+1].name)[2] + get_box_param(features[1:][i].name)[2]
                     else:
                         x += get_box_param(features[1:][i+1].name)[2]
             
