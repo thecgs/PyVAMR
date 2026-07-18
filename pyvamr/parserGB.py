@@ -141,6 +141,17 @@ def reinit_features(features, start = "tRNA-Phe", force_reoriented=False):
             
     return features_new
 
+
+def get_type(genename):
+    if genename in ['ND1', 'ND2', 'ND3', 'ND4L', 'ND4', 'ND5', 'ND6', 'COX1', 'COX2', 'COX3', 'ATPase6', 'ATPase8', 'Cytb']:
+        return "CDS"
+    elif 'rRNA' in genename:
+        return "rRNA"
+    elif 'tRNA' in genename:
+        return "tRNA"
+    else:
+        return "CDS"
+        
 def get_features(file, abbr=False, colors=None, isfilename2species=False, start=None, force_reoriented=False):
     """
     Descripton:
@@ -164,19 +175,23 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
         colors = MTColors['MITOFISH']
     elif isinstance(colors, str):
         colors = MTColors.get(colors.upper(), 'MITOFISH')
+    elif isinstance(colors, dict):
+        pass
             
     features = []
+    unknown_locations = {}
     
     if os.path.exists(file):
         handle = SeqIO.parse(file, 'genbank')
     else:
-        handle = SeqIO.parse(get_genbank_from_ncbi(file), 'genbank') 
+        handle = SeqIO.parse(get_genbank_from_ncbi(file), 'genbank')
+        
     #print(handle)
     for record in handle:
         topology = record.annotations['topology'].lower()
         mtgenome = record.seq.upper()
         accession = record.id
-        #print(file, record.id)
+        
         for i in record.features:
             if len(list(i.qualifiers.values())) != 0:
                 if "product" in i.qualifiers:
@@ -184,30 +199,33 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
                     gene_name =  search_name(gene_name)
                     
                     #print("gene_product", gene_name)
-                    if gene_name not in CommonNamesDict and "gene" in i.qualifiers:
+                    if gene_name.upper() not in CommonNamesDict and "gene" in i.qualifiers:
                         gene_name = i.qualifiers['gene'][0]
                         gene_name =  search_name(gene_name)
                         
-                        if gene_name not in CommonNamesDict and "note" in i.qualifiers:
+                        if gene_name.upper() not in CommonNamesDict and "note" in i.qualifiers:
                             gene_name = i.qualifiers['note'][0]
                             gene_name =  search_name(gene_name)
-                            if gene_name not in CommonNamesDict and i.type.upper() in CommonNamesDict:
+                            if gene_name.upper() not in CommonNamesDict and i.type.upper() in CommonNamesDict:
                                 gene_name =  search_name(i.type)
                         
                 elif "gene" in i.qualifiers:
                     gene_name = i.qualifiers['gene'][0]
                     gene_name =  search_name(gene_name)
-                    if gene_name not in CommonNamesDict and "note" in i.qualifiers:
+                    #print(i, gene_name)
+                    if gene_name.upper() not in CommonNamesDict and "note" in i.qualifiers:
+                        #print(i, gene_name)
                         gene_name = i.qualifiers['note'][0]
                         gene_name =  search_name(gene_name)
-                        if gene_name not in CommonNamesDict and i.type.upper() in CommonNamesDict:
+                        if gene_name.upper() not in CommonNamesDict and i.type.upper() in CommonNamesDict:
                             gene_name =  search_name(i.type)
                 
                 elif "note" in i.qualifiers:
+                    #print(i.qualifiers)
                     gene_name = i.qualifiers["note"][0]
                     gene_name =  search_name(gene_name)
                     #print(i, gene_name)
-                    if gene_name not in CommonNamesDict and i.type.upper() in CommonNamesDict:
+                    if gene_name.upper() not in CommonNamesDict and i.type.upper() in CommonNamesDict:
                         gene_name =  search_name(i.type)
                                 
                 elif "organism" in i.qualifiers:
@@ -222,8 +240,14 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
                 gene_name =  search_name(gene_name)
                 
             gene_name = CommonNamesDict.get(gene_name.upper(), gene_name)
-            #print(gene_name)
-            
+            ## repalce
+            if gene_name.upper() not in CommonNamesDict:
+                if str(i.location) not in unknown_locations:
+                    unknown_locations[str(i.location)] = (gene_name, False, i.location)
+            else:
+                if str(i.location) in unknown_locations:
+                    unknown_locations[str(i.location)] = (gene_name, True, i.location)
+                    
             if i.type ==  "source":
                 if isfilename2species:
                     species_name = os.path.splitext(os.path.basename(file))[0]
@@ -246,7 +270,6 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
                         if not is_repeat(features=features, location=i.location):
                             features.append(Feature(name=gene_name, location=i.location, type=i.type, color=colors.get(gene_name, colors.get('Other genes', 'gray'))))                   
                     
-                            
             elif i.type in ['CDS', 'gene']:
                 if gene_name in ['ND1', 'ND2', 'ND3', 'ND4L', 'ND4', 'ND5', 'ND6', 'COX1', 'COX2', 'COX3', 'ATPase6', 'ATPase8', 'Cytb']:
                     if isinstance(i.location, CompoundLocation):
@@ -274,7 +297,6 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
                     else:
                         if not is_repeat(features=features, location=i.location, name=gene_name):
                             features.append(Feature(name=gene_name, location=i.location, type="rRNA", color=colors.get(gene_name, colors.get('Other genes', 'gray'))))
-                            
                 else: #ORF
                     if isinstance(i.location, CompoundLocation):
                         for location in i.location.parts:
@@ -283,7 +305,7 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
                     else:
                         if not is_repeat(features=features, location=i.location, name=gene_name):
                             features.append(Feature(name=gene_name, location=i.location, type="CDS", color=colors.get(gene_name, colors.get('Other genes', 'gray'))))
-                            
+
                             
             elif i.type in ['misc_feature', 'repeat_region']:
                 if gene_name in ['tRNA-His', 'tRNA-Pro', 'tRNA-Thr', 'tRNA-Trp', 'tRNA-Met', 'tRNA-Asp', 'tRNA-Ala', 'tRNA-Gln',
@@ -291,32 +313,79 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
                                  'tRNA-Glu', 'tRNA-Val', 'tRNA-Cys', 'tRNA-Ser']:
                     if isinstance(i.location, CompoundLocation):
                         for location in i.location.parts:
-                            features.append(Feature(name=gene_name, location=location, type="tRNA", color=colors.get(gene_name, colors.get('Other genes', 'gray')),join=i.location))
+                            if not is_repeat(features=features, location=location, name=gene_name):
+                                features.append(Feature(name=gene_name, location=location, type="tRNA", color=colors.get(gene_name, colors.get('Other genes', 'gray')),join=i.location))
                     else:
-                        features.append(Feature(name=gene_name, location=i.location, type="tRNA", color=colors.get(gene_name, colors.get('Other genes', 'gray'))))
+                        if not is_repeat(features=features, location=i.location, name=gene_name):
+                            features.append(Feature(name=gene_name, location=i.location, type="tRNA", color=colors.get(gene_name, colors.get('Other genes', 'gray'))))
+                            
                 elif gene_name in ['12S rRNA', '16S rRNA']: #, "D-loop"
                     if isinstance(i.location, CompoundLocation):
                         for location in i.location.parts:
-                            features.append(Feature(name=gene_name, location=location, type="rRNA", color=colors.get(gene_name, colors.get('Other genes', 'gray')),join=i.location))
+                            if not is_repeat(features=features, location=location, name=gene_name):
+                                features.append(Feature(name=gene_name, location=location, type="rRNA", color=colors.get(gene_name, colors.get('Other genes', 'gray')),join=i.location))
                     else:
-                        features.append(Feature(name=gene_name, location=i.location, type="rRNA", color=colors.get(gene_name, colors.get('Other genes', 'gray'))))
+                        if not is_repeat(features=features, location=i.location, name=gene_name):
+                            features.append(Feature(name=gene_name, location=i.location, type="rRNA", color=colors.get(gene_name, colors.get('Other genes', 'gray'))))
+                        
                 elif gene_name in ["D-loop"]:
                     if isinstance(i.location, CompoundLocation):
                         for location in i.location.parts:
-                            features.append(Feature(name=gene_name, location=location, type="D-loop", color=colors.get(gene_name, colors.get('Other genes', 'gray')),join=i.location))
+                            if not is_repeat(features=features, location=location, name=gene_name):
+                                features.append(Feature(name=gene_name, location=location, type="D-loop", color=colors.get(gene_name, colors.get('Other genes', 'gray')),join=i.location))
                     else:
-                        features.append(Feature(name=gene_name, location=i.location, type="D-loop", color=colors.get(gene_name, colors.get('Other genes', 'gray'))))
+                        if not is_repeat(features=features, location=i.location, name=gene_name):
+                            features.append(Feature(name=gene_name, location=i.location, type="D-loop", color=colors.get(gene_name, colors.get('Other genes', 'gray'))))
+                        
+                        
                 elif gene_name in ['ND1', 'ND2', 'ND3', 'ND4L', 'ND4', 'ND5', 'ND6', 'COX1', 'COX2', 'COX3', 'ATPase6', 'ATPase8', 'Cytb']:
                     if isinstance(i.location, CompoundLocation):
                         for location in i.location.parts:
-                            features.append(Feature(name=gene_name, location=location, type="CDS", color=colors.get(gene_name, colors.get('Other genes', 'gray')),join=i.location))
+                            if not is_repeat(features=features, location=location, name=gene_name):
+                                features.append(Feature(name=gene_name, location=location, type="CDS", color=colors.get(gene_name, colors.get('Other genes', 'gray')),join=i.location))
                     else:
-                        features.append(Feature(name=gene_name, location=i.location, type="CDS", color=colors.get(gene_name, colors.get('Other genes', 'gray'))))
-            
+                        if not is_repeat(features=features, location=i.location, name=gene_name):
+                            features.append(Feature(name=gene_name, location=i.location, type="CDS", color=colors.get(gene_name, colors.get('Other genes', 'gray'))))
             else:
                 pass
+
+
+    join_locations = []
+    features_tmp = [features[0]]
+    for i in features[1:]:
+        if i.join !=None:
+            if str(i.join) in unknown_locations:
+                if unknown_locations[str(i.join)][1] == True:
+                    if str(i.join) not in join_locations:
+                        join_locations.append(str(i.join))
+                        for location in i.join.parts:
+                            features_tmp.append(Feature(name=unknown_locations[str(i.join)][0],
+                                                        location=location, 
+                                                        type=get_type(unknown_locations[str(i.join)][0]),
+                                                        color=colors.get(unknown_locations[str(i.join)][0],
+                                                                         colors.get('Other genes', 'gray')),join=i.join))
+                    else:
+                        pass
+                else:
+                    features_tmp.append(i)
+            else:
+                features_tmp.append(i)
+        else:
+            if str(i.location) in unknown_locations:
+                if unknown_locations[str(i.location)][1] == True:                
+                    features_tmp.append(Feature(name=unknown_locations[str(i.location)][0],
+                                                location=i.location,
+                                                type=get_type(unknown_locations[str(i.location)][0]),
+                                                color=colors.get(unknown_locations[str(i.location)][0],
+                                                                 colors.get('Other genes', 'gray'))))                           
+                else:
+                    features_tmp.append(i)
+            else:
+                features_tmp.append(i)
+
     
     #print(features)
+    features = features_tmp
     if features == []:
         logger = logging.getLogger(__name__) 
         logger.setLevel(logging.DEBUG)
@@ -335,7 +404,7 @@ def get_features(file, abbr=False, colors=None, isfilename2species=False, start=
     if start !=None:
         res = reinit_features(res, start = start, force_reoriented=force_reoriented)
     return res
-
+    
 def tidy_genbank(file, output=None, isfilename2species=False, start=None, table=2):
     """
     Descripton:

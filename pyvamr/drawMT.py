@@ -357,7 +357,7 @@ def is_othergenes(features):
      'tRNA-Ala', 'tRNA-Gln', 'tRNA-Ile', 'tRNA-Arg', 'tRNA-Tyr', 
      'tRNA-Phe', 'tRNA-Lys', 'tRNA-Gly', 'tRNA-Asn', 'tRNA-Leu',
      'tRNA-Glu', 'tRNA-Val', 'tRNA-Cys', 'tRNA-Ser', '12S rRNA',
-     '16S rRNA', 'D-loop']:
+     '16S rRNA', 'D-loop', 'Gap']:
             #print(feature.name)
             res = True
     return res
